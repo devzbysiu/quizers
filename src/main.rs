@@ -2,7 +2,11 @@ use iced::{
     button, scrollable, Button, Column, Container, Element, HorizontalAlignment, Length, Radio,
     Row, Sandbox, Scrollable, Settings, Space, Text,
 };
-use log::debug;
+use md_questions::{Question, Questions};
+use question::QuestionsProvider;
+use std::fs::read_to_string;
+
+mod question;
 
 fn main() {
     pretty_env_logger::init();
@@ -20,8 +24,10 @@ impl Sandbox for Quizer {
     type Message = Message;
 
     fn new() -> Quizer {
+        let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
+            .expect("failed to read questions markdown");
         Quizer {
-            questions: QuestionsView::new(),
+            questions: QuestionsView::new(Box::new(Questions::from(content.as_str()))),
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
             next_button: button::State::new(),
@@ -101,24 +107,16 @@ pub enum Message {
     StepMessage(QuestionMessage),
 }
 
-struct Question {
-    text: String,
-    answers: Vec<String>,
-}
-
 struct QuestionsView {
-    questions: Vec<Question>,
+    questions_provider: Box<dyn QuestionsProvider>,
     current: usize,
     selected_answer: usize,
 }
 
 impl QuestionsView {
-    fn new() -> QuestionsView {
+    fn new(questions_provider: Box<dyn QuestionsProvider>) -> QuestionsView {
         QuestionsView {
-            questions: vec![Question {
-                text: "Test".into(),
-                answers: vec!["Some".into(), "answer".into()],
-            }],
+            questions_provider,
             current: 0,
             selected_answer: 0,
         }
@@ -141,7 +139,11 @@ impl QuestionsView {
     }
 
     fn view(&mut self) -> Element<QuestionMessage> {
-        Self::radio(&self.questions[self.current], self.selected_answer).into()
+        Self::radio(
+            &self.questions_provider.questions()[self.current],
+            self.selected_answer,
+        )
+        .into()
     }
 
     fn radio<'a>(question: &Question, selected_answer: usize) -> Column<'a, QuestionMessage> {
@@ -149,13 +151,13 @@ impl QuestionsView {
             .padding(20)
             .spacing(10)
             .push(Text::new("Iced is written in...").size(24))
-            .push((0..question.answers.len()).fold(
+            .push((0..question.no_answers()).fold(
                 Column::new().padding(10).spacing(20),
                 |choices, answer| {
                     choices.push(
                         Radio::new(
                             answer,
-                            &question.answers[answer],
+                            &question.answer(answer).text(),
                             Some(selected_answer),
                             QuestionMessage::Answered,
                         )
@@ -165,7 +167,7 @@ impl QuestionsView {
             ));
 
         Self::container("Radio button")
-            .push(Text::new(&question.text))
+            .push(Text::new(&question.text()))
             .push(q)
             .push(Text::new(
                 "Iced works very well with iterators! The list above is \
@@ -191,7 +193,7 @@ impl QuestionsView {
     }
 
     fn can_continue(&self) -> bool {
-        self.current + 1 < self.questions.len()
+        self.current + 1 < self.questions_provider.len()
     }
 }
 
