@@ -6,21 +6,21 @@ use log::debug;
 
 fn main() {
     pretty_env_logger::init();
-    Tour::run(Settings::default())
+    Quizer::run(Settings::default())
 }
 
-pub struct Tour {
+pub struct Quizer {
     steps: Steps,
     scroll: scrollable::State,
     back_button: button::State,
     next_button: button::State,
 }
 
-impl Sandbox for Tour {
+impl Sandbox for Quizer {
     type Message = Message;
 
-    fn new() -> Tour {
-        Tour {
+    fn new() -> Quizer {
+        Quizer {
             steps: Steps::new(),
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
@@ -47,7 +47,7 @@ impl Sandbox for Tour {
     }
 
     fn view(&mut self) -> Element<Message> {
-        let Tour {
+        let Quizer {
             steps,
             scroll,
             back_button,
@@ -89,6 +89,7 @@ impl Sandbox for Tour {
         Container::new(scrollable)
             .height(Length::Fill)
             .center_y()
+            .style(style::Container)
             .into()
     }
 }
@@ -197,12 +198,10 @@ impl<'a> Step {
             .push(Language::all().iter().cloned().fold(
                 Column::new().padding(10).spacing(20),
                 |choices, language| {
-                    choices.push(Radio::new(
-                        language,
-                        language,
-                        selection,
-                        StepMessage::LanguageSelected,
-                    ))
+                    choices.push(
+                        Radio::new(language, language, selection, StepMessage::LanguageSelected)
+                            .style(style::Radio),
+                    )
                 },
             ));
 
@@ -284,7 +283,7 @@ pub enum Layout {
 }
 
 mod style {
-    use iced::{button, Background, Color, Vector};
+    use iced::{button, container, radio, Background, Color, Vector};
 
     pub enum Button {
         Primary,
@@ -296,6 +295,44 @@ mod style {
         0x89 as f32 / 255.0,
         0xDA as f32 / 255.0,
     );
+
+    const SURFACE: Color = Color::from_rgb(
+        0x40 as f32 / 255.0,
+        0x44 as f32 / 255.0,
+        0x4B as f32 / 255.0,
+    );
+
+    pub struct Radio;
+
+    impl radio::StyleSheet for Radio {
+        fn active(&self) -> radio::Style {
+            radio::Style {
+                background: Background::Color(SURFACE),
+                dot_color: ACTIVE,
+                border_width: 1,
+                border_color: ACTIVE,
+            }
+        }
+
+        fn hovered(&self) -> radio::Style {
+            radio::Style {
+                background: Background::Color(Color { a: 0.5, ..SURFACE }),
+                ..self.active()
+            }
+        }
+    }
+
+    pub struct Container;
+
+    impl container::StyleSheet for Container {
+        fn style(&self) -> container::Style {
+            container::Style {
+                background: Some(Background::Color(Color::from_rgb8(0x36, 0x39, 0x3F))),
+                text_color: Some(Color::WHITE),
+                ..container::Style::default()
+            }
+        }
+    }
 
     impl button::StyleSheet for Button {
         fn active(&self) -> button::Style {
