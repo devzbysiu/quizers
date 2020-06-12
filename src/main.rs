@@ -10,7 +10,7 @@ fn main() {
 }
 
 pub struct Quizer {
-    steps: Steps,
+    questions: QuestionsView,
     scroll: scrollable::State,
     back_button: button::State,
     next_button: button::State,
@@ -21,7 +21,7 @@ impl Sandbox for Quizer {
 
     fn new() -> Quizer {
         Quizer {
-            steps: Steps::new(),
+            questions: QuestionsView::new(),
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
             next_button: button::State::new(),
@@ -35,20 +35,20 @@ impl Sandbox for Quizer {
     fn update(&mut self, event: Message) {
         match event {
             Message::BackPressed => {
-                self.steps.go_back();
+                self.questions.go_back();
             }
             Message::NextPressed => {
-                self.steps.advance();
+                self.questions.advance();
             }
             Message::StepMessage(step_msg) => {
-                self.steps.update(step_msg);
+                self.questions.update(step_msg);
             }
         }
     }
 
     fn view(&mut self) -> Element<Message> {
         let Quizer {
-            steps,
+            questions,
             scroll,
             back_button,
             next_button,
@@ -57,7 +57,7 @@ impl Sandbox for Quizer {
 
         let mut controls = Row::new();
 
-        if steps.has_previous() {
+        if questions.has_previous() {
             controls = controls.push(
                 button(back_button, "Back")
                     .on_press(Message::BackPressed)
@@ -67,7 +67,7 @@ impl Sandbox for Quizer {
 
         controls = controls.push(Space::with_width(Length::Fill));
 
-        if steps.can_continue() {
+        if questions.can_continue() {
             controls = controls.push(
                 button(next_button, "Next")
                     .on_press(Message::NextPressed)
@@ -79,7 +79,7 @@ impl Sandbox for Quizer {
             .max_width(540)
             .spacing(20)
             .padding(20)
-            .push(steps.view().map(Message::StepMessage))
+            .push(questions.view().map(Message::StepMessage))
             .push(controls)
             .into();
 
@@ -98,28 +98,80 @@ impl Sandbox for Quizer {
 pub enum Message {
     BackPressed,
     NextPressed,
-    StepMessage(StepMessage),
+    StepMessage(QuestionMessage),
 }
 
-struct Steps {
-    steps: Vec<Step>,
+struct Question {
+    text: String,
+    answers: Vec<String>,
+}
+
+struct QuestionsView {
+    questions: Vec<Question>,
     current: usize,
+    selected_answer: usize,
 }
 
-impl Steps {
-    fn new() -> Steps {
-        Steps {
-            steps: vec![Step::Radio { selection: None }, Step::End],
+impl QuestionsView {
+    fn new() -> QuestionsView {
+        QuestionsView {
+            questions: vec![Question {
+                text: "Test".into(),
+                answers: vec!["Some".into(), "answer".into()],
+            }],
             current: 0,
+            selected_answer: 0,
         }
     }
 
-    fn update(&mut self, msg: StepMessage) {
-        self.steps[self.current].update(msg);
+    fn update(&mut self, msg: QuestionMessage) {
+        self.update_view(msg);
     }
 
-    fn view(&mut self) -> Element<StepMessage> {
-        self.steps[self.current].view()
+    fn update_view(&mut self, msg: QuestionMessage) {
+        match msg {
+            QuestionMessage::Answered(selected) => {
+                self.selected_answer = selected;
+            }
+        };
+    }
+
+    fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
+        Column::new().spacing(20).push(Text::new(title).size(50))
+    }
+
+    fn view(&mut self) -> Element<QuestionMessage> {
+        Self::radio(&self.questions[self.current], self.selected_answer).into()
+    }
+
+    fn radio<'a>(question: &Question, selected_answer: usize) -> Column<'a, QuestionMessage> {
+        let q = Column::new()
+            .padding(20)
+            .spacing(10)
+            .push(Text::new("Iced is written in...").size(24))
+            .push((0..question.answers.len()).fold(
+                Column::new().padding(10).spacing(20),
+                |choices, answer| {
+                    choices.push(
+                        Radio::new(
+                            answer,
+                            &question.answers[answer],
+                            Some(selected_answer),
+                            QuestionMessage::Answered,
+                        )
+                        .style(style::Radio),
+                    )
+                },
+            ));
+
+        Self::container("Radio button")
+            .push(Text::new(&question.text))
+            .push(q)
+            .push(Text::new(
+                "Iced works very well with iterators! The list above is \
+                 basically created by folding a column over the different \
+                 choices, creating a radio button for each one of them!",
+            ))
     }
 
     fn advance(&mut self) {
@@ -139,96 +191,13 @@ impl Steps {
     }
 
     fn can_continue(&self) -> bool {
-        self.current + 1 < self.steps.len() && self.steps[self.current].can_continue()
+        self.current + 1 < self.questions.len()
     }
-
-    fn title(&self) -> &str {
-        self.steps[self.current].title()
-    }
-}
-
-enum Step {
-    Radio { selection: Option<Language> },
-    End,
 }
 
 #[derive(Debug, Clone)]
-pub enum StepMessage {
-    LanguageSelected(Language),
-}
-
-impl<'a> Step {
-    fn update(&mut self, msg: StepMessage) {
-        match msg {
-            StepMessage::LanguageSelected(language) => {
-                if let Step::Radio { selection } = self {
-                    *selection = Some(language);
-                }
-            }
-        };
-    }
-
-    fn title(&self) -> &str {
-        match self {
-            Step::Radio { .. } => "Radio button",
-            Step::End => "End",
-        }
-    }
-
-    fn can_continue(&self) -> bool {
-        match self {
-            Step::Radio { selection } => *selection == Some(Language::Rust),
-            Step::End => false,
-        }
-    }
-
-    fn view(&mut self) -> Element<StepMessage> {
-        match self {
-            Step::Radio { selection } => Self::radio(*selection),
-            Step::End => Self::end(),
-        }
-        .into()
-    }
-
-    fn radio(selection: Option<Language>) -> Column<'a, StepMessage> {
-        let question = Column::new()
-            .padding(20)
-            .spacing(10)
-            .push(Text::new("Iced is written in...").size(24))
-            .push(Language::all().iter().cloned().fold(
-                Column::new().padding(10).spacing(20),
-                |choices, language| {
-                    choices.push(
-                        Radio::new(language, language, selection, StepMessage::LanguageSelected)
-                            .style(style::Radio),
-                    )
-                },
-            ));
-
-        Self::container("Radio button")
-            .push(Text::new(
-                "A radio button is normally used to represent a choice... \
-                 Surprise test!",
-            ))
-            .push(question)
-            .push(Text::new(
-                "Iced works very well with iterators! The list above is \
-                 basically created by folding a column over the different \
-                 choices, creating a radio button for each one of them!",
-            ))
-    }
-
-    fn container(title: &str) -> Column<'a, StepMessage> {
-        Column::new().spacing(20).push(Text::new(title).size(50))
-    }
-
-    fn end() -> Column<'a, StepMessage> {
-        Self::container("You reached the end!")
-            .push(Text::new(
-                "This tour will be updated as more features are added.",
-            ))
-            .push(Text::new("Make sure to keep an eye on it!"))
-    }
+pub enum QuestionMessage {
+    Answered(usize),
 }
 
 fn button<'a, Message>(state: &'a mut button::State, label: &str) -> Button<'a, Message> {
@@ -241,45 +210,24 @@ fn button<'a, Message>(state: &'a mut button::State, label: &str) -> Button<'a, 
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Language {
-    Rust,
-    Elm,
-    Ruby,
-    Haskell,
-    C,
-    Other,
+pub enum Answers {
+    First,
+    Second,
+    Third,
+    Fourth,
+    Fifth,
 }
 
-impl Language {
-    fn all() -> [Language; 6] {
-        [
-            Language::C,
-            Language::Elm,
-            Language::Ruby,
-            Language::Haskell,
-            Language::Rust,
-            Language::Other,
-        ]
+impl From<Answers> for usize {
+    fn from(answer: Answers) -> usize {
+        match answer {
+            Answers::First => 0,
+            Answers::Second => 1,
+            Answers::Third => 2,
+            Answers::Fourth => 3,
+            Answers::Fifth => 4,
+        }
     }
-}
-
-impl From<Language> for String {
-    fn from(language: Language) -> String {
-        String::from(match language {
-            Language::Rust => "Rust",
-            Language::Elm => "Elm",
-            Language::Ruby => "Ruby",
-            Language::Haskell => "Haskell",
-            Language::C => "C",
-            Language::Other => "Other",
-        })
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Layout {
-    Row,
-    Column,
 }
 
 mod style {
