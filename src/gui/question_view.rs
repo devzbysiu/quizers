@@ -18,14 +18,14 @@ impl QuestionsView {
         }
     }
 
-    pub(crate) fn update(&mut self, msg: QuestionMessage) {
+    pub(crate) fn update(&mut self, msg: &QuestionMessage) {
         self.update_view(msg);
     }
 
-    fn update_view(&mut self, msg: QuestionMessage) {
+    fn update_view(&mut self, msg: &QuestionMessage) {
         match msg {
             QuestionMessage::Answered(selected) => {
-                self.selected_answer = selected;
+                self.selected_answer = *selected;
             }
         };
     }

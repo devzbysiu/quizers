@@ -9,17 +9,9 @@ pub(crate) mod style {
         Secondary,
     }
 
-    const ACTIVE: Color = Color::from_rgb(
-        0x72 as f32 / 255.0,
-        0x89 as f32 / 255.0,
-        0xDA as f32 / 255.0,
-    );
+    const ACTIVE: Color = Color::from_rgb(114_f32 / 255.0, 137_f32 / 255.0, 218_f32 / 255.0);
 
-    const SURFACE: Color = Color::from_rgb(
-        0x40 as f32 / 255.0,
-        0x44 as f32 / 255.0,
-        0x4B as f32 / 255.0,
-    );
+    const SURFACE: Color = Color::from_rgb(64_f32 / 255.0, 68_f32 / 255.0, 75_f32 / 255.0);
 
     pub struct Radio;
 
