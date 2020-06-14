@@ -1,5 +1,8 @@
 use md_questions::{Question, Questions};
 
+// FIXME: this shouldn't use structured from md_questions
+//  either use separate abstraction or make those
+//  structures common between md_questions and this app
 pub(crate) trait QuestionsProvider {
     fn questions(&self) -> &[Question];
     fn question(&self, idx: usize) -> &Question;

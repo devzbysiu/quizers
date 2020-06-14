@@ -140,7 +140,7 @@ impl QuestionsView {
 
     fn view(&mut self) -> Element<QuestionMessage> {
         Self::radio(
-            &self.questions_provider.questions()[self.current],
+            &self.questions_provider.question(self.current),
             self.selected_answer,
         )
         .into()
