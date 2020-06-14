@@ -1,48 +1,35 @@
-use crate::gui::style;
+use crate::gui::{style, State};
 use crate::question::QuestionsProvider;
 use iced::{Column, Element, Radio, Text};
 use md_questions::Question;
 
 pub(crate) struct QuestionsView {
     questions_provider: Box<dyn QuestionsProvider>,
-    current: usize,
-    selected_answer: usize,
 }
 
 impl QuestionsView {
     pub(crate) fn new(questions_provider: Box<dyn QuestionsProvider>) -> QuestionsView {
-        QuestionsView {
-            questions_provider,
-            current: 0,
-            selected_answer: 0,
+        QuestionsView { questions_provider }
+    }
+
+    pub(crate) fn view(&self, state: &State) -> Element<QuestionMessage> {
+        if state.show_results {
+            Self::container("Results")
+                .push(Text::new("You've got 75%"))
+                .into()
+        } else {
+            Self::radio(
+                &self.questions_provider.question(state.current),
+                state.selected_answer,
+            )
+            .into()
         }
     }
 
-    pub(crate) fn update(&mut self, msg: QuestionMessage) {
-        self.update_view(msg);
-    }
-
-    fn update_view(&mut self, msg: QuestionMessage) {
-        match msg {
-            QuestionMessage::Answered(selected) => {
-                self.selected_answer = selected;
-            }
-        };
-    }
-
-    fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
-        Column::new().spacing(20).push(Text::new(title).size(50))
-    }
-
-    pub(crate) fn view(&mut self) -> Element<QuestionMessage> {
-        Self::radio(
-            &self.questions_provider.question(self.current),
-            self.selected_answer,
-        )
-        .into()
-    }
-
-    fn radio<'a>(question: &Question, selected_answer: usize) -> Column<'a, QuestionMessage> {
+    fn radio<'a>(
+        question: &Question,
+        selected_answer: Option<usize>,
+    ) -> Column<'a, QuestionMessage> {
         let q = Column::new()
             .padding(20)
             .spacing(10)
@@ -53,7 +40,7 @@ impl QuestionsView {
                         Radio::new(
                             answer,
                             &question.answer(answer).text(),
-                            Some(selected_answer),
+                            selected_answer,
                             QuestionMessage::Answered,
                         )
                         .style(style::Radio),
@@ -66,24 +53,8 @@ impl QuestionsView {
             .push(q)
     }
 
-    pub(crate) fn advance(&mut self) {
-        if self.can_continue() {
-            self.current += 1;
-        }
-    }
-
-    pub(crate) fn go_back(&mut self) {
-        if self.has_previous() {
-            self.current -= 1;
-        }
-    }
-
-    pub(crate) fn has_previous(&self) -> bool {
-        self.current > 0
-    }
-
-    pub(crate) fn can_continue(&self) -> bool {
-        self.current + 1 < self.questions_provider.len()
+    fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
+        Column::new().spacing(20).push(Text::new(title).size(50))
     }
 }
 

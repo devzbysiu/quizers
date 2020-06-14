@@ -1,4 +1,5 @@
 use crate::gui::question_view::{QuestionMessage, QuestionsView};
+use crate::gui::State;
 use iced::{
     button, scrollable, Button, Column, Container, Element, HorizontalAlignment, Length, Row,
     Sandbox, Scrollable, Space, Text,
@@ -10,6 +11,8 @@ use std::fs::read_to_string;
 pub enum Message {
     BackPressed,
     NextPressed,
+    FinishPressed,
+    RestartPressed,
     StepMessage(QuestionMessage),
 }
 
@@ -18,6 +21,7 @@ pub struct Quizers {
     scroll: scrollable::State,
     back_button: button::State,
     next_button: button::State,
+    state: State,
 }
 
 impl Sandbox for Quizers {
@@ -26,11 +30,14 @@ impl Sandbox for Quizers {
     fn new() -> Quizers {
         let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
             .expect("failed to read questions markdown");
+        let questions_provider = Questions::from(content.as_str());
+        let number_of_questions = questions_provider.len();
         Quizers {
-            questions: QuestionsView::new(Box::new(Questions::from(content.as_str()))),
+            questions: QuestionsView::new(Box::new(questions_provider)),
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
             next_button: button::State::new(),
+            state: init_state(number_of_questions),
         }
     }
 
@@ -40,32 +47,22 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Message) {
         match event {
-            Message::BackPressed => {
-                self.questions.go_back();
+            Message::BackPressed => self.state.go_back(),
+            Message::NextPressed => self.state.advance(),
+            Message::StepMessage(QuestionMessage::Answered(selected)) => {
+                self.state.selected_answer = Some(selected)
             }
-            Message::NextPressed => {
-                self.questions.advance();
-            }
-            Message::StepMessage(step_msg) => {
-                self.questions.update(step_msg);
-            }
+            Message::FinishPressed => self.state.show_results = true,
+            Message::RestartPressed => self.state = init_state(self.state.number_of_questions),
         }
     }
 
     fn view(&mut self) -> Element<Message> {
-        let Quizers {
-            questions,
-            scroll,
-            back_button,
-            next_button,
-            ..
-        } = self;
-
         let mut controls = Row::new();
 
-        if questions.has_previous() {
+        if self.state.has_previous() && !self.state.show_results {
             controls = controls.push(
-                button(back_button, "Back")
+                button(&mut self.back_button, "Back")
                     .on_press(Message::BackPressed)
                     .style(style::Button::Secondary),
             );
@@ -73,10 +70,22 @@ impl Sandbox for Quizers {
 
         controls = controls.push(Space::with_width(Length::Fill));
 
-        if questions.can_continue() {
+        if self.state.can_continue() {
             controls = controls.push(
-                button(next_button, "Next")
+                button(&mut self.next_button, "Next")
                     .on_press(Message::NextPressed)
+                    .style(style::Button::Primary),
+            );
+        } else if !self.state.show_results {
+            controls = controls.push(
+                button(&mut self.next_button, "Finish")
+                    .on_press(Message::FinishPressed)
+                    .style(style::Button::Primary),
+            );
+        } else if self.state.show_results {
+            controls = controls.push(
+                button(&mut self.next_button, "Restart")
+                    .on_press(Message::RestartPressed)
                     .style(style::Button::Primary),
             );
         }
@@ -85,12 +94,12 @@ impl Sandbox for Quizers {
             .max_width(540)
             .spacing(20)
             .padding(20)
-            .push(questions.view().map(Message::StepMessage))
+            .push(self.questions.view(&self.state).map(Message::StepMessage))
             .push(controls)
             .into();
 
-        let scrollable =
-            Scrollable::new(scroll).push(Container::new(content).width(Length::Fill).center_x());
+        let scrollable = Scrollable::new(&mut self.scroll)
+            .push(Container::new(content).width(Length::Fill).center_x());
 
         Container::new(scrollable)
             .height(Length::Fill)
@@ -178,5 +187,15 @@ pub(crate) mod style {
                 ..self.active()
             }
         }
+    }
+}
+
+fn init_state(number_of_questions: usize) -> State {
+    State {
+        current: 0,
+        selected_answer: None,
+        answers: vec![],
+        show_results: false,
+        number_of_questions,
     }
 }

@@ -1,6 +1,36 @@
 pub(crate) mod question_view;
 pub(crate) mod quizers;
 
+pub(crate) struct State {
+    current: usize,
+    selected_answer: Option<usize>,
+    answers: Vec<usize>,
+    show_results: bool,
+    number_of_questions: usize,
+}
+
+impl State {
+    pub(crate) fn has_previous(&mut self) -> bool {
+        self.current > 0
+    }
+
+    fn go_back(&mut self) {
+        if self.has_previous() {
+            self.current -= 1;
+        }
+    }
+
+    pub(crate) fn advance(&mut self) {
+        if self.can_continue() {
+            self.current += 1;
+        }
+    }
+
+    pub(crate) fn can_continue(&self) -> bool {
+        self.current + 1 < self.number_of_questions
+    }
+}
+
 pub(crate) mod style {
     use iced::{button, container, radio, Background, Color, Vector};
 
