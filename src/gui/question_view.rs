@@ -14,48 +14,45 @@ impl QuestionsView {
 
     pub(crate) fn view(&self, state: &State) -> Element<QuestionMessage> {
         if state.show_results {
-            Self::container("Results")
+            container("Results")
                 .push(Text::new("You've got 75%"))
                 .into()
         } else {
-            Self::radio(
+            radio(
                 &self.questions_provider.question(state.current),
                 state.selected_answer,
             )
             .into()
         }
     }
+}
 
-    fn radio<'a>(
-        question: &Question,
-        selected_answer: Option<usize>,
-    ) -> Column<'a, QuestionMessage> {
-        let q = Column::new()
-            .padding(20)
-            .spacing(10)
-            .push((0..question.no_answers()).fold(
-                Column::new().padding(10).spacing(20),
-                |choices, answer| {
-                    choices.push(
-                        Radio::new(
-                            answer,
-                            &question.answer(answer).text(),
-                            selected_answer,
-                            QuestionMessage::Answered,
-                        )
-                        .style(style::Radio),
+fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, QuestionMessage> {
+    let q = Column::new()
+        .padding(20)
+        .spacing(10)
+        .push((0..question.no_answers()).fold(
+            Column::new().padding(10).spacing(20),
+            |choices, answer| {
+                choices.push(
+                    Radio::new(
+                        answer,
+                        &question.answer(answer).text(),
+                        selected_answer,
+                        QuestionMessage::Answered,
                     )
-                },
-            ));
+                    .style(style::Radio),
+                )
+            },
+        ));
 
-        Self::container("Question")
-            .push(Text::new(&question.text()))
-            .push(q)
-    }
+    container("Question")
+        .push(Text::new(&question.text()))
+        .push(q)
+}
 
-    fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
-        Column::new().spacing(20).push(Text::new(title).size(50))
-    }
+fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
+    Column::new().spacing(20).push(Text::new(title).size(50))
 }
 
 #[derive(Debug, Clone)]

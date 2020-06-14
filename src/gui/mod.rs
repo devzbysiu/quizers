@@ -23,6 +23,7 @@ impl State {
     pub(crate) fn advance(&mut self) {
         if self.can_continue() {
             self.current += 1;
+            self.selected_answer = None;
         }
     }
 
