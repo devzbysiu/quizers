@@ -15,7 +15,7 @@ impl QuestionsProvider for Questions {
     }
 
     fn question(&self, idx: usize) -> &Question {
-        self.question(idx)
+        &self.questions()[idx]
     }
 
     fn len(&self) -> usize {
