@@ -10,6 +10,16 @@ pub(crate) struct State {
 }
 
 impl State {
+    fn new(number_of_questions: usize) -> Self {
+        Self {
+            current: 0,
+            selected_answer: None,
+            answers: vec![],
+            show_results: false,
+            number_of_questions,
+        }
+    }
+
     pub(crate) fn has_previous(&mut self) -> bool {
         self.current > 0
     }

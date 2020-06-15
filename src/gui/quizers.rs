@@ -37,7 +37,7 @@ impl Sandbox for Quizers {
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
             next_button: button::State::new(),
-            state: init_state(number_of_questions),
+            state: State::new(number_of_questions),
         }
     }
 
@@ -53,7 +53,7 @@ impl Sandbox for Quizers {
                 self.state.selected_answer = Some(selected)
             }
             Message::FinishPressed => self.state.show_results = true,
-            Message::RestartPressed => self.state = init_state(self.state.number_of_questions),
+            Message::RestartPressed => self.state = State::new(self.state.number_of_questions),
         }
     }
 
@@ -187,15 +187,5 @@ pub(crate) mod style {
                 ..self.active()
             }
         }
-    }
-}
-
-fn init_state(number_of_questions: usize) -> State {
-    State {
-        current: 0,
-        selected_answer: None,
-        answers: vec![],
-        show_results: false,
-        number_of_questions,
     }
 }
