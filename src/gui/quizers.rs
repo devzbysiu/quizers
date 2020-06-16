@@ -8,7 +8,7 @@ use md_questions::Questions;
 use std::fs::read_to_string;
 
 #[derive(Debug, Clone)]
-pub enum Message {
+pub enum Msg {
     BackPressed,
     NextPressed,
     FinishPressed,
@@ -21,11 +21,12 @@ pub struct Quizers {
     scroll: scrollable::State,
     back_button: button::State,
     next_button: button::State,
+    restart_button: button::State,
     state: State,
 }
 
 impl Sandbox for Quizers {
-    type Message = Message;
+    type Message = Msg;
 
     fn new() -> Quizers {
         let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
@@ -37,6 +38,7 @@ impl Sandbox for Quizers {
             scroll: scrollable::State::new(),
             back_button: button::State::new(),
             next_button: button::State::new(),
+            restart_button: button::State::new(),
             state: State::new(number_of_questions),
         }
     }
@@ -45,25 +47,25 @@ impl Sandbox for Quizers {
         "Quizers".into()
     }
 
-    fn update(&mut self, event: Message) {
+    fn update(&mut self, event: Msg) {
         match event {
-            Message::BackPressed => self.state.go_back(),
-            Message::NextPressed => self.state.advance(),
-            Message::StepMessage(QuestionMessage::Answered(selected)) => {
+            Msg::BackPressed => self.state.go_back(),
+            Msg::NextPressed => self.state.advance(),
+            Msg::StepMessage(QuestionMessage::Answered(selected)) => {
                 self.state.selected_answer = Some(selected)
             }
-            Message::FinishPressed => self.state.show_results = true,
-            Message::RestartPressed => self.state = State::new(self.state.number_of_questions),
+            Msg::FinishPressed => self.state.show_results = true,
+            Msg::RestartPressed => self.state = State::new(self.state.number_of_questions),
         }
     }
 
-    fn view(&mut self) -> Element<Message> {
+    fn view(&mut self) -> Element<Msg> {
         let mut controls = Row::new();
 
         if self.state.has_previous() && !self.state.show_results {
             controls = controls.push(
                 button(&mut self.back_button, "Back")
-                    .on_press(Message::BackPressed)
+                    .on_press(Msg::BackPressed)
                     .style(style::Button::Secondary),
             );
         }
@@ -71,30 +73,21 @@ impl Sandbox for Quizers {
         controls = controls.push(Space::with_width(Length::Fill));
 
         if self.state.can_continue() {
-            controls = controls.push(
-                button(&mut self.next_button, "Next")
-                    .on_press(Message::NextPressed)
-                    .style(style::Button::Primary),
-            );
+            controls =
+                controls.push(button(&mut self.next_button, "Next").on_press(Msg::NextPressed));
         } else if !self.state.show_results {
-            controls = controls.push(
-                button(&mut self.next_button, "Finish")
-                    .on_press(Message::FinishPressed)
-                    .style(style::Button::Primary),
-            );
+            controls =
+                controls.push(button(&mut self.next_button, "Finish").on_press(Msg::FinishPressed));
         } else if self.state.show_results {
-            controls = controls.push(
-                button(&mut self.next_button, "Restart")
-                    .on_press(Message::RestartPressed)
-                    .style(style::Button::Primary),
-            );
+            controls = controls
+                .push(button(&mut self.restart_button, "Restart").on_press(Msg::RestartPressed));
         }
 
         let content: Element<_> = Column::new()
             .max_width(540)
             .spacing(20)
             .padding(20)
-            .push(self.questions.view(&self.state).map(Message::StepMessage))
+            .push(self.questions.view(&self.state).map(Msg::StepMessage))
             .push(controls)
             .into();
 
@@ -116,6 +109,7 @@ fn button<'a, Message>(state: &'a mut button::State, label: &str) -> Button<'a, 
     )
     .padding(12)
     .min_width(100)
+    .style(style::Button::Primary)
 }
 
 pub(crate) mod style {
