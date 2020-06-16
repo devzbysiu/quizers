@@ -12,7 +12,7 @@ impl QuestionsView {
         QuestionsView { questions_provider }
     }
 
-    pub(crate) fn view(&self, state: &State) -> Element<QuestionMessage> {
+    pub(crate) fn view(&self, state: &State) -> Element<QuestionMsg> {
         if state.show_results {
             container("Results")
                 .push(Text::new("You've got 75%"))
@@ -27,7 +27,7 @@ impl QuestionsView {
     }
 }
 
-fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, QuestionMessage> {
+fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, QuestionMsg> {
     let q = Column::new()
         .padding(20)
         .spacing(10)
@@ -39,7 +39,7 @@ fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, 
                         answer,
                         &question.answer(answer).text(),
                         selected_answer,
-                        QuestionMessage::Answered,
+                        QuestionMsg::Answered,
                     )
                     .style(style::Radio),
                 )
@@ -51,12 +51,12 @@ fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, 
         .push(q)
 }
 
-fn container<'a>(title: &str) -> Column<'a, QuestionMessage> {
+fn container<'a>(title: &str) -> Column<'a, QuestionMsg> {
     Column::new().spacing(20).push(Text::new(title).size(50))
 }
 
 #[derive(Debug, Clone)]
-pub enum QuestionMessage {
+pub enum QuestionMsg {
     Answered(usize),
 }
 

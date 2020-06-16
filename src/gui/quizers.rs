@@ -1,4 +1,4 @@
-use crate::gui::question_view::{QuestionMessage, QuestionsView};
+use crate::gui::question_view::{QuestionMsg, QuestionsView};
 use crate::gui::State;
 use iced::{
     button, scrollable, Button, Column, Container, Element, HorizontalAlignment, Length, Row,
@@ -13,7 +13,7 @@ pub enum Msg {
     NextPressed,
     FinishPressed,
     RestartPressed,
-    StepMessage(QuestionMessage),
+    Answer(QuestionMsg),
 }
 
 pub struct Quizers {
@@ -51,7 +51,7 @@ impl Sandbox for Quizers {
         match event {
             Msg::BackPressed => self.state.go_back(),
             Msg::NextPressed => self.state.advance(),
-            Msg::StepMessage(QuestionMessage::Answered(selected)) => {
+            Msg::Answer(QuestionMsg::Answered(selected)) => {
                 self.state.selected_answer = Some(selected)
             }
             Msg::FinishPressed => self.state.show_results = true,
@@ -75,10 +75,10 @@ impl Sandbox for Quizers {
         if self.state.can_continue() {
             controls =
                 controls.push(button(&mut self.next_button, "Next").on_press(Msg::NextPressed));
-        } else if !self.state.show_results {
+        } else if !self.state.should_show_results() {
             controls =
                 controls.push(button(&mut self.next_button, "Finish").on_press(Msg::FinishPressed));
-        } else if self.state.show_results {
+        } else if self.state.should_show_results() {
             controls = controls
                 .push(button(&mut self.restart_button, "Restart").on_press(Msg::RestartPressed));
         }
@@ -87,7 +87,7 @@ impl Sandbox for Quizers {
             .max_width(540)
             .spacing(20)
             .padding(20)
-            .push(self.questions.view(&self.state).map(Msg::StepMessage))
+            .push(self.questions.view(&self.state).map(Msg::Answer))
             .push(controls)
             .into();
 

@@ -40,6 +40,10 @@ impl State {
     pub(crate) fn can_continue(&self) -> bool {
         self.current + 1 < self.number_of_questions
     }
+
+    pub(crate) fn should_show_results(&self) -> bool {
+        self.show_results
+    }
 }
 
 pub(crate) mod style {
