@@ -150,42 +150,33 @@ impl Sandbox for Quizers {
 fn first_question_screen<'a>(
     back_button: &'a mut button::State,
     next_button: &'a mut button::State,
-    current_question: &'a Question,
+    question: &'a Question,
 ) -> Element<'a, Msg> {
-    let mut controls = Row::new();
+    let back = button(back_button, "Back");
+    let next = button(next_button, "Next").on_press(Msg::NextPressed);
+    build_content(radio(question, None), controls(back, next))
+}
 
-    let back_button = Button::new(
-        back_button,
-        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    let next_button = Button::new(
-        next_button,
-        Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .on_press(Msg::NextPressed)
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    controls = controls.push(back_button);
-    controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(next_button);
-
+fn build_content<'a>(content: Element<'a, Msg>, controls: Element<'a, Msg>) -> Element<'a, Msg> {
     Column::new()
         .max_width(540)
         .spacing(20)
         .padding(20)
-        .push(radio(current_question, None))
+        .push(content)
         .push(Space::with_height(Length::Fill))
         .push(controls)
         .into()
 }
 
-pub(crate) fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, Msg> {
+fn controls<'a>(left_button: Button<'a, Msg>, right_button: Button<'a, Msg>) -> Element<'a, Msg> {
+    let mut controls = Row::new();
+    controls = controls.push(left_button);
+    controls = controls.push(Space::with_width(Length::Fill));
+    controls = controls.push(right_button);
+    controls.into()
+}
+
+pub(crate) fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Element<'a, Msg> {
     let q = Column::new()
         .padding(20)
         .spacing(10)
@@ -208,119 +199,35 @@ pub(crate) fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> 
         .push(Text::new("Question").size(50))
         .push(Text::new(&question.text()))
         .push(q)
+        .into()
 }
 
 fn middle_question_screen<'a>(
     back_button: &'a mut button::State,
     next_button: &'a mut button::State,
-    current_question: &'a Question,
+    question: &'a Question,
 ) -> Element<'a, Msg> {
-    let mut controls = Row::new();
-
-    let back_button = Button::new(
-        back_button,
-        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .on_press(Msg::BackPressed)
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    let next_button = Button::new(
-        next_button,
-        Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .on_press(Msg::NextPressed)
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    controls = controls.push(back_button);
-    controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(next_button);
-
-    Column::new()
-        .max_width(540)
-        .spacing(20)
-        .padding(20)
-        .push(radio(current_question, None))
-        .push(Space::with_height(Length::Fill))
-        .push(controls)
-        .into()
+    let back = button(back_button, "Back").on_press(Msg::BackPressed);
+    let next = button(next_button, "Next").on_press(Msg::NextPressed);
+    build_content(radio(question, None), controls(back, next))
 }
 
 fn last_question_screen<'a>(
     back_button: &'a mut button::State,
     finish_button: &'a mut button::State,
-    current_question: &'a Question,
+    question: &'a Question,
 ) -> Element<'a, Msg> {
-    let mut controls = Row::new();
-
-    let back_button = Button::new(
-        back_button,
-        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    let finish_button = Button::new(
-        finish_button,
-        Text::new("Finish").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .on_press(Msg::ShowResults)
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    controls = controls.push(back_button);
-    controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(finish_button);
-
-    Column::new()
-        .max_width(540)
-        .spacing(20)
-        .padding(20)
-        .push(radio(current_question, None))
-        .push(Space::with_height(Length::Fill))
-        .push(controls)
-        .into()
+    let back = button(back_button, "Back");
+    let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
+    build_content(radio(question, None), controls(back, finish))
 }
 
 fn results_screen<'a>(
     back_button: &'a mut button::State,
     restart_button: &'a mut button::State,
 ) -> Element<'a, Msg> {
-    let mut controls = Row::new();
-
-    let back_button = Button::new(
-        back_button,
-        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    let restart_button = Button::new(
-        restart_button,
-        Text::new("Restart").horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary);
-
-    controls = controls.push(back_button);
-    controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(restart_button);
-
+    let back = button(back_button, "Back");
+    let restart = button(restart_button, "Restart");
     let results_section = Column::new().spacing(20).push(Text::new("Results"));
-
-    Column::new()
-        .max_width(540)
-        .spacing(20)
-        .padding(20)
-        .push(results_section)
-        .push(Space::with_height(Length::Fill))
-        .push(controls)
-        .into()
+    build_content(results_section.into(), controls(back, restart))
 }
