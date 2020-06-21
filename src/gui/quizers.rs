@@ -39,7 +39,7 @@ pub(crate) struct Quizers {
 }
 
 impl Quizers {
-    fn inner_view<'a>(&'a mut self) -> Element<'a, Msg> {
+    fn inner_view(&'_ mut self) -> Element<'_, Msg> {
         match &mut self.current_page {
             PageModel::FirstQuestion {
                 back_button,
@@ -71,7 +71,12 @@ impl Quizers {
             PageModel::Results {
                 back_button,
                 restart_button,
-            } => results(back_button, restart_button),
+            } => results(
+                back_button,
+                restart_button,
+                &self.questions,
+                &self.selected_answers,
+            ),
         }
     }
 }
