@@ -34,7 +34,7 @@ enum PageModel {
 pub(crate) struct Quizers {
     current_page: PageModel,
     question_idx: usize,
-    _selected_answer: Option<usize>,
+    selected_answers: Vec<Option<usize>>,
     questions: Questions,
 }
 
@@ -44,11 +44,21 @@ impl Quizers {
             PageModel::FirstQuestion {
                 back_button,
                 next_button,
-            } => first_question(back_button, next_button, &self.questions[self.question_idx]),
+            } => first_question(
+                back_button,
+                next_button,
+                &self.questions[self.question_idx],
+                self.selected_answers[self.question_idx],
+            ),
             PageModel::MiddleQuestion {
                 back_button,
                 next_button,
-            } => middle_question(back_button, next_button, &self.questions[self.question_idx]),
+            } => middle_question(
+                back_button,
+                next_button,
+                &self.questions[self.question_idx],
+                self.selected_answers[self.question_idx],
+            ),
             PageModel::LastQuestion {
                 back_button,
                 finish_button,
@@ -56,6 +66,7 @@ impl Quizers {
                 back_button,
                 finish_button,
                 &self.questions[self.question_idx],
+                self.selected_answers[self.question_idx],
             ),
             PageModel::Results {
                 back_button,
@@ -78,7 +89,7 @@ impl Sandbox for Quizers {
                 next_button: button::State::new(),
             },
             question_idx: 0,
-            _selected_answer: None,
+            selected_answers: vec![None; questions.len()],
             questions,
         }
     }
@@ -115,7 +126,9 @@ impl Sandbox for Quizers {
                     },
                 };
             }
-            Msg::Answer(_idx) => {}
+            Msg::Answer(idx) => {
+                self.selected_answers[self.question_idx] = Some(idx);
+            }
             Msg::ShowResults => {
                 self.current_page = PageModel::Results {
                     back_button: button::State::new(),
