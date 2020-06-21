@@ -1,9 +1,6 @@
 use crate::gui::quizers::button;
 use crate::gui::style;
-use iced::{
-    button, scrollable, Button, Column, Container, Element, HorizontalAlignment, Length, Radio,
-    Row, Sandbox, Scrollable, Space, Text,
-};
+use iced::{button, Button, Column, Container, Element, Length, Radio, Row, Sandbox, Space, Text};
 use md_questions::{Question, Questions};
 use std::fs::read_to_string;
 
@@ -13,14 +10,6 @@ pub(crate) enum Msg {
     BackPressed,
     NextPressed,
     ShowResults,
-}
-
-#[derive(Debug, Clone)]
-pub(crate) enum Page {
-    FirstQuestion,
-    MiddleQuestion,
-    LastQuestion,
-    Results,
 }
 
 enum PageModel {
@@ -45,8 +34,39 @@ enum PageModel {
 pub(crate) struct Quizers {
     current_page: PageModel,
     question_idx: usize,
-    selected_answer: Option<usize>,
+    _selected_answer: Option<usize>,
     questions: Questions,
+}
+
+impl Quizers {
+    fn inner_view<'a>(&'a mut self) -> Element<'a, Msg> {
+        match &mut self.current_page {
+            PageModel::FirstQuestion {
+                back_button,
+                next_button,
+            } => {
+                first_question_screen(back_button, next_button, &self.questions[self.question_idx])
+            }
+            PageModel::MiddleQuestion {
+                back_button,
+                next_button,
+            } => {
+                middle_question_screen(back_button, next_button, &self.questions[self.question_idx])
+            }
+            PageModel::LastQuestion {
+                back_button,
+                finish_button,
+            } => last_question_screen(
+                back_button,
+                finish_button,
+                &self.questions[self.question_idx],
+            ),
+            PageModel::Results {
+                back_button,
+                restart_button,
+            } => results_screen(back_button, restart_button),
+        }
+    }
 }
 
 impl Sandbox for Quizers {
@@ -62,7 +82,7 @@ impl Sandbox for Quizers {
                 next_button: button::State::new(),
             },
             question_idx: 0,
-            selected_answer: None,
+            _selected_answer: None,
             questions,
         }
     }
@@ -99,7 +119,7 @@ impl Sandbox for Quizers {
                     },
                 };
             }
-            Msg::Answer(idx) => {}
+            Msg::Answer(_idx) => {}
             Msg::ShowResults => {
                 self.current_page = PageModel::Results {
                     back_button: button::State::new(),
@@ -110,34 +130,7 @@ impl Sandbox for Quizers {
     }
 
     fn view(&mut self) -> Element<Msg> {
-        let inner_view = match &mut self.current_page {
-            PageModel::FirstQuestion {
-                back_button,
-                next_button,
-            } => {
-                first_question_screen(back_button, next_button, &self.questions[self.question_idx])
-            }
-            PageModel::MiddleQuestion {
-                back_button,
-                next_button,
-            } => {
-                middle_question_screen(back_button, next_button, &self.questions[self.question_idx])
-            }
-            PageModel::LastQuestion {
-                back_button,
-                finish_button,
-            } => last_question_screen(
-                back_button,
-                finish_button,
-                &self.questions[self.question_idx],
-            ),
-            PageModel::Results {
-                back_button,
-                restart_button,
-            } => results_screen(back_button, restart_button),
-        };
-
-        Container::new(inner_view)
+        Container::new(self.inner_view())
             .height(Length::Fill)
             .width(Length::Fill)
             .center_y()
