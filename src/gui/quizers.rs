@@ -1,45 +1,85 @@
-use crate::gui::question_view::{QuestionMsg, QuestionsView};
-use crate::gui::State;
-use iced::{
-    button, scrollable, Button, Column, Container, Element, HorizontalAlignment, Length, Row,
-    Sandbox, Scrollable, Space, Text,
-};
+use crate::gui::style;
+use crate::gui::view::{first_question, last_question, middle_question, results};
+use iced::{button, Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
 
 #[derive(Debug, Clone)]
-pub enum Msg {
+pub(crate) enum Msg {
+    Answer(usize),
     BackPressed,
     NextPressed,
-    FinishPressed,
-    RestartPressed,
-    Answer(QuestionMsg),
+    ShowResults,
 }
 
-pub struct Quizers {
-    questions: QuestionsView,
-    scroll: scrollable::State,
-    back_button: button::State,
-    next_button: button::State,
-    restart_button: button::State,
-    state: State,
+enum PageModel {
+    FirstQuestion {
+        back_button: button::State,
+        next_button: button::State,
+    },
+    MiddleQuestion {
+        back_button: button::State,
+        next_button: button::State,
+    },
+    LastQuestion {
+        back_button: button::State,
+        finish_button: button::State,
+    },
+    Results {
+        back_button: button::State,
+        restart_button: button::State,
+    },
+}
+
+pub(crate) struct Quizers {
+    current_page: PageModel,
+    question_idx: usize,
+    _selected_answer: Option<usize>,
+    questions: Questions,
+}
+
+impl Quizers {
+    fn inner_view<'a>(&'a mut self) -> Element<'a, Msg> {
+        match &mut self.current_page {
+            PageModel::FirstQuestion {
+                back_button,
+                next_button,
+            } => first_question(back_button, next_button, &self.questions[self.question_idx]),
+            PageModel::MiddleQuestion {
+                back_button,
+                next_button,
+            } => middle_question(back_button, next_button, &self.questions[self.question_idx]),
+            PageModel::LastQuestion {
+                back_button,
+                finish_button,
+            } => last_question(
+                back_button,
+                finish_button,
+                &self.questions[self.question_idx],
+            ),
+            PageModel::Results {
+                back_button,
+                restart_button,
+            } => results(back_button, restart_button),
+        }
+    }
 }
 
 impl Sandbox for Quizers {
     type Message = Msg;
 
-    fn new() -> Quizers {
+    fn new() -> Self {
         let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
             .expect("failed to read questions markdown");
-        let questions_provider = Questions::from(content.as_str());
-        let number_of_questions = questions_provider.len();
-        Quizers {
-            questions: QuestionsView::new(Box::new(questions_provider)),
-            scroll: scrollable::State::new(),
-            back_button: button::State::new(),
-            next_button: button::State::new(),
-            restart_button: button::State::new(),
-            state: State::new(number_of_questions),
+        let questions = Questions::from(content.as_str());
+        Self {
+            current_page: PageModel::FirstQuestion {
+                back_button: button::State::new(),
+                next_button: button::State::new(),
+            },
+            question_idx: 0,
+            _selected_answer: None,
+            questions,
         }
     }
 
@@ -49,140 +89,49 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Msg) {
         match event {
-            Msg::BackPressed => self.state.go_back(),
-            Msg::NextPressed => self.state.advance(),
-            Msg::Answer(QuestionMsg::Answered(selected)) => {
-                self.state.selected_answer = Some(selected)
+            Msg::BackPressed => {
+                self.question_idx -= 1;
+                self.current_page = match self.question_idx {
+                    x if x == 0 => PageModel::FirstQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                    },
+                    _ => PageModel::MiddleQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                    },
+                };
             }
-            Msg::FinishPressed => self.state.show_results = true,
-            Msg::RestartPressed => self.state = State::new(self.state.number_of_questions),
+            Msg::NextPressed => {
+                self.question_idx += 1;
+                self.current_page = match self.question_idx {
+                    x if x == self.questions.len() - 1 => PageModel::LastQuestion {
+                        back_button: button::State::new(),
+                        finish_button: button::State::new(),
+                    },
+                    _ => PageModel::MiddleQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                    },
+                };
+            }
+            Msg::Answer(_idx) => {}
+            Msg::ShowResults => {
+                self.current_page = PageModel::Results {
+                    back_button: button::State::new(),
+                    restart_button: button::State::new(),
+                }
+            }
         }
     }
 
     fn view(&mut self) -> Element<Msg> {
-        let mut controls = Row::new();
-
-        if self.state.has_previous() && !self.state.show_results {
-            controls = controls.push(
-                button(&mut self.back_button, "Back")
-                    .on_press(Msg::BackPressed)
-                    .style(style::Button::Secondary),
-            );
-        }
-
-        controls = controls.push(Space::with_width(Length::Fill));
-
-        if self.state.can_continue() {
-            controls =
-                controls.push(button(&mut self.next_button, "Next").on_press(Msg::NextPressed));
-        } else if !self.state.should_show_results() {
-            controls =
-                controls.push(button(&mut self.next_button, "Finish").on_press(Msg::FinishPressed));
-        } else if self.state.should_show_results() {
-            controls = controls
-                .push(button(&mut self.restart_button, "Restart").on_press(Msg::RestartPressed));
-        }
-
-        let content: Element<_> = Column::new()
-            .max_width(540)
-            .spacing(20)
-            .padding(20)
-            .push(self.questions.view(&self.state).map(Msg::Answer))
-            .push(controls)
-            .into();
-
-        let scrollable = Scrollable::new(&mut self.scroll)
-            .push(Container::new(content).width(Length::Fill).center_x());
-
-        Container::new(scrollable)
+        Container::new(self.inner_view())
             .height(Length::Fill)
+            .width(Length::Fill)
             .center_y()
+            .center_x()
             .style(style::Container)
             .into()
-    }
-}
-
-pub(crate) fn button<'a, Message>(
-    state: &'a mut button::State,
-    label: &str,
-) -> Button<'a, Message> {
-    Button::new(
-        state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::Button::Primary)
-}
-
-pub(crate) mod style {
-    use iced::{button, container, radio, Background, Color, Vector};
-
-    pub enum Button {
-        Primary,
-        Secondary,
-    }
-
-    const ACTIVE: Color = Color::from_rgb(
-        0x72 as f32 / 255.0,
-        0x89 as f32 / 255.0,
-        0xDA as f32 / 255.0,
-    );
-
-    const SURFACE: Color = Color::from_rgb(
-        0x40 as f32 / 255.0,
-        0x44 as f32 / 255.0,
-        0x4B as f32 / 255.0,
-    );
-
-    pub struct Radio;
-
-    impl radio::StyleSheet for Radio {
-        fn active(&self) -> radio::Style {
-            radio::Style {
-                background: Background::Color(SURFACE),
-                dot_color: ACTIVE,
-                border_width: 1,
-                border_color: ACTIVE,
-            }
-        }
-
-        fn hovered(&self) -> radio::Style {
-            radio::Style {
-                background: Background::Color(Color { a: 0.5, ..SURFACE }),
-                ..self.active()
-            }
-        }
-    }
-
-    pub struct Container;
-
-    impl container::StyleSheet for Container {
-        fn style(&self) -> container::Style {
-            container::Style {
-                background: Some(Background::Color(Color::from_rgb8(0x36, 0x39, 0x3F))),
-                text_color: Some(Color::WHITE),
-                ..container::Style::default()
-            }
-        }
-    }
-
-    impl button::StyleSheet for Button {
-        fn active(&self) -> button::Style {
-            button::Style {
-                background: Some(Background::Color(ACTIVE)),
-                border_radius: 3,
-                text_color: Color::WHITE,
-                ..button::Style::default()
-            }
-        }
-
-        fn hovered(&self) -> button::Style {
-            button::Style {
-                text_color: Color::WHITE,
-                shadow_offset: Vector::new(1.0, 2.0),
-                ..self.active()
-            }
-        }
     }
 }

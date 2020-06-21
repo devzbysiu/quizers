@@ -1,59 +1,9 @@
-pub(crate) mod question_view;
+pub(crate) mod helpers;
 pub(crate) mod quizers;
 pub(crate) mod view;
 
-pub(crate) struct State {
-    current: usize,
-    selected_answer: Option<usize>,
-    answers: Vec<usize>,
-    show_results: bool,
-    number_of_questions: usize,
-}
-
-impl State {
-    fn new(number_of_questions: usize) -> Self {
-        Self {
-            current: 0,
-            selected_answer: None,
-            answers: vec![],
-            show_results: false,
-            number_of_questions,
-        }
-    }
-
-    pub(crate) fn has_previous(&mut self) -> bool {
-        self.current > 0
-    }
-
-    fn go_back(&mut self) {
-        if self.has_previous() {
-            self.current -= 1;
-        }
-    }
-
-    pub(crate) fn advance(&mut self) {
-        if self.can_continue() {
-            self.current += 1;
-            self.selected_answer = None;
-        }
-    }
-
-    pub(crate) fn can_continue(&self) -> bool {
-        self.current + 1 < self.number_of_questions
-    }
-
-    pub(crate) fn should_show_results(&self) -> bool {
-        self.show_results
-    }
-}
-
 pub(crate) mod style {
     use iced::{button, container, radio, Background, Color, Vector};
-
-    pub enum Button {
-        Primary,
-        Secondary,
-    }
 
     const ACTIVE: Color = Color::from_rgb(
         0x72 as f32 / 255.0,
@@ -98,6 +48,8 @@ pub(crate) mod style {
             }
         }
     }
+
+    pub struct Button;
 
     impl button::StyleSheet for Button {
         fn active(&self) -> button::Style {
