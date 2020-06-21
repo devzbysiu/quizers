@@ -10,7 +10,9 @@ use std::fs::read_to_string;
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
     Answer(usize),
-    Navigation(Page),
+    BackPressed,
+    NextPressed,
+    ShowResults,
 }
 
 #[derive(Debug, Clone)]
@@ -23,6 +25,7 @@ pub(crate) enum Page {
 
 enum PageModel {
     FirstQuestion {
+        back_button: button::State,
         next_button: button::State,
     },
     MiddleQuestion {
@@ -34,6 +37,7 @@ enum PageModel {
         finish_button: button::State,
     },
     Results {
+        back_button: button::State,
         restart_button: button::State,
     },
 }
@@ -54,6 +58,7 @@ impl Sandbox for Quizers {
         let questions = Questions::from(content.as_str());
         Self {
             current_page: PageModel::FirstQuestion {
+                back_button: button::State::new(),
                 next_button: button::State::new(),
             },
             question_idx: 0,
@@ -68,32 +73,49 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Msg) {
         match event {
-            Msg::Navigation(page) => {
-                self.current_page = match page {
-                    Page::FirstQuestion => PageModel::FirstQuestion {
-                        next_button: button::State::new(),
-                    },
-                    Page::MiddleQuestion => PageModel::MiddleQuestion {
+            Msg::BackPressed => {
+                self.question_idx -= 1;
+                self.current_page = match self.question_idx {
+                    x if x == 0 => PageModel::FirstQuestion {
                         back_button: button::State::new(),
                         next_button: button::State::new(),
                     },
-                    Page::LastQuestion => PageModel::LastQuestion {
+                    _ => PageModel::MiddleQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                    },
+                };
+            }
+            Msg::NextPressed => {
+                self.question_idx += 1;
+                self.current_page = match self.question_idx {
+                    x if x == self.questions.len() - 1 => PageModel::LastQuestion {
                         back_button: button::State::new(),
                         finish_button: button::State::new(),
                     },
-                    Page::Results => PageModel::Results {
-                        restart_button: button::State::new(),
+                    _ => PageModel::MiddleQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
                     },
                 };
             }
             Msg::Answer(idx) => {}
+            Msg::ShowResults => {
+                self.current_page = PageModel::Results {
+                    back_button: button::State::new(),
+                    restart_button: button::State::new(),
+                }
+            }
         }
     }
 
     fn view(&mut self) -> Element<Msg> {
         let inner_view = match &mut self.current_page {
-            PageModel::FirstQuestion { next_button } => {
-                first_question_screen(next_button, &self.questions[self.question_idx])
+            PageModel::FirstQuestion {
+                back_button,
+                next_button,
+            } => {
+                first_question_screen(back_button, next_button, &self.questions[self.question_idx])
             }
             PageModel::MiddleQuestion {
                 back_button,
@@ -109,7 +131,10 @@ impl Sandbox for Quizers {
                 finish_button,
                 &self.questions[self.question_idx],
             ),
-            PageModel::Results { restart_button } => results_screen(restart_button),
+            PageModel::Results {
+                back_button,
+                restart_button,
+            } => results_screen(back_button, restart_button),
         };
 
         Container::new(inner_view)
@@ -123,27 +148,39 @@ impl Sandbox for Quizers {
 }
 
 fn first_question_screen<'a>(
+    back_button: &'a mut button::State,
     next_button: &'a mut button::State,
     current_question: &'a Question,
 ) -> Element<'a, Msg> {
     let mut controls = Row::new();
 
-    let button = Button::new(
-        next_button,
-        Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
+    let back_button = Button::new(
+        back_button,
+        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
     )
     .padding(12)
     .min_width(100)
     .style(style::Button::Primary);
 
+    let next_button = Button::new(
+        next_button,
+        Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
+    )
+    .on_press(Msg::NextPressed)
+    .padding(12)
+    .min_width(100)
+    .style(style::Button::Primary);
+
+    controls = controls.push(back_button);
     controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(button);
+    controls = controls.push(next_button);
 
     Column::new()
         .max_width(540)
         .spacing(20)
         .padding(20)
         .push(radio(current_question, None))
+        .push(Space::with_height(Length::Fill))
         .push(controls)
         .into()
 }
@@ -184,6 +221,7 @@ fn middle_question_screen<'a>(
         back_button,
         Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
     )
+    .on_press(Msg::BackPressed)
     .padding(12)
     .min_width(100)
     .style(style::Button::Primary);
@@ -192,12 +230,13 @@ fn middle_question_screen<'a>(
         next_button,
         Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
     )
+    .on_press(Msg::NextPressed)
     .padding(12)
     .min_width(100)
     .style(style::Button::Primary);
 
-    controls = controls.push(Space::with_width(Length::Fill));
     controls = controls.push(back_button);
+    controls = controls.push(Space::with_width(Length::Fill));
     controls = controls.push(next_button);
 
     Column::new()
@@ -205,6 +244,7 @@ fn middle_question_screen<'a>(
         .spacing(20)
         .padding(20)
         .push(radio(current_question, None))
+        .push(Space::with_height(Length::Fill))
         .push(controls)
         .into()
 }
@@ -228,12 +268,13 @@ fn last_question_screen<'a>(
         finish_button,
         Text::new("Finish").horizontal_alignment(HorizontalAlignment::Center),
     )
+    .on_press(Msg::ShowResults)
     .padding(12)
     .min_width(100)
     .style(style::Button::Primary);
 
-    controls = controls.push(Space::with_width(Length::Fill));
     controls = controls.push(back_button);
+    controls = controls.push(Space::with_width(Length::Fill));
     controls = controls.push(finish_button);
 
     Column::new()
@@ -241,28 +282,45 @@ fn last_question_screen<'a>(
         .spacing(20)
         .padding(20)
         .push(radio(current_question, None))
+        .push(Space::with_height(Length::Fill))
         .push(controls)
         .into()
 }
 
-fn results_screen<'a>(restart_button: &'a mut button::State) -> Element<'a, Msg> {
+fn results_screen<'a>(
+    back_button: &'a mut button::State,
+    restart_button: &'a mut button::State,
+) -> Element<'a, Msg> {
     let mut controls = Row::new();
 
-    let restart_button = Button::new(
-        restart_button,
-        Text::new("Next").horizontal_alignment(HorizontalAlignment::Center),
+    let back_button = Button::new(
+        back_button,
+        Text::new("Back").horizontal_alignment(HorizontalAlignment::Center),
     )
     .padding(12)
     .min_width(100)
     .style(style::Button::Primary);
 
+    let restart_button = Button::new(
+        restart_button,
+        Text::new("Restart").horizontal_alignment(HorizontalAlignment::Center),
+    )
+    .padding(12)
+    .min_width(100)
+    .style(style::Button::Primary);
+
+    controls = controls.push(back_button);
     controls = controls.push(Space::with_width(Length::Fill));
     controls = controls.push(restart_button);
+
+    let results_section = Column::new().spacing(20).push(Text::new("Results"));
 
     Column::new()
         .max_width(540)
         .spacing(20)
         .padding(20)
+        .push(results_section)
+        .push(Space::with_height(Length::Fill))
         .push(controls)
         .into()
 }
