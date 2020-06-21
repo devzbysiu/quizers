@@ -1,5 +1,6 @@
 pub(crate) mod question_view;
 pub(crate) mod quizers;
+pub(crate) mod view;
 
 pub(crate) struct State {
     current: usize,

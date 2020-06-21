@@ -102,7 +102,10 @@ impl Sandbox for Quizers {
     }
 }
 
-fn button<'a, Message>(state: &'a mut button::State, label: &str) -> Button<'a, Message> {
+pub(crate) fn button<'a, Message>(
+    state: &'a mut button::State,
+    label: &str,
+) -> Button<'a, Message> {
     Button::new(
         state,
         Text::new(label).horizontal_alignment(HorizontalAlignment::Center),

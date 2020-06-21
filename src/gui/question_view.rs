@@ -27,7 +27,10 @@ impl QuestionsView {
     }
 }
 
-fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Column<'a, QuestionMsg> {
+pub(crate) fn radio<'a>(
+    question: &Question,
+    selected_answer: Option<usize>,
+) -> Column<'a, QuestionMsg> {
     let q = Column::new()
         .padding(20)
         .spacing(10)

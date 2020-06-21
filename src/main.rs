@@ -1,4 +1,4 @@
-use crate::gui::quizers::Quizers;
+use crate::gui::view::Quizers;
 use iced::{Sandbox, Settings};
 
 mod gui;
