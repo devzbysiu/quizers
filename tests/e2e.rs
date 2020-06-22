@@ -22,7 +22,7 @@ fn test() -> Result<(), GuiError> {
         .assert()
         .text(QUESTION_TXT)?
         .gui()
-        .kill();
+        .kill()?;
 
     Ok(())
 }
