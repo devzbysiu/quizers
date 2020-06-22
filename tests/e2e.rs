@@ -16,12 +16,13 @@ The bundle providing the service needs to export the java package of the service
 #[test]
 fn test() -> Result<(), GuiError> {
     Gui::bin("quizers")?
-        .open()
+        .open()?
         .click(FIRST_ANSWER)?
         .click(NEXT_BUTTON)?
         .assert()
-        .with_similarity(0.75)
-        .text(QUESTION_TXT)?;
+        .text(QUESTION_TXT)?
+        .gui()
+        .kill();
 
     Ok(())
 }
