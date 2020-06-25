@@ -3,7 +3,7 @@
   <h1><code>quizers</code></h1>
 
   <p>
-    <strong>CHANGEME</strong>
+    <strong>Learn new stuff easier</strong>
   </p>
 
   <p>
@@ -37,9 +37,11 @@
 
 # <p id="about">About</p>
 
-</p>
+This app helps you to test your knowledge on specific topic with quiz-like experience.
 
-## --- TODO ---
+1. First, add your knowledge source:
+    - it's a markdown file with specific convention, which you can find [here](https://github.com/devzbysiu/md-questions)
+2. Then start the quiz
 
 # <p id="installation">Installation</p>
 
