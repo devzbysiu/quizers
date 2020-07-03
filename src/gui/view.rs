@@ -1,5 +1,6 @@
 use crate::gui::helpers::{build_content, button, controls, radio};
 use crate::gui::quizers::Msg;
+use conv::prelude::*;
 use iced::{button, Column, Element, Text};
 use md_questions::{Question, Questions};
 
@@ -40,7 +41,7 @@ pub(crate) fn results<'a>(
     back_button: &'a mut button::State,
     restart_button: &'a mut button::State,
     questions: &Questions,
-    selected_answers: &Vec<Option<usize>>,
+    selected_answers: &[Option<usize>],
 ) -> Element<'a, Msg> {
     let back = button(back_button, "Back");
     let restart = button(restart_button, "Restart");
@@ -56,7 +57,8 @@ pub(crate) fn results<'a>(
         "You've got {}/{} ({:.2}%) points",
         points,
         questions.len(),
-        points as f32 / questions.len() as f32
+        f64::value_from(points).expect("failed to convert from usize to f64")
+            / f64::value_from(questions.len()).expect("failed to convert from usize to f64")
     );
     let results_section = Column::new().spacing(20).push(Text::new(result));
     build_content(results_section.into(), controls(back, restart))
