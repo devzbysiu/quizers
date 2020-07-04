@@ -6,25 +6,10 @@ use iced::{
 };
 use md_questions::Question;
 
-pub(crate) fn build_content<'a>(
+pub(crate) fn build_view<'a>(
     questions_labels: Element<'a, Msg>,
-    content: Element<'a, Msg>,
-    controls: Element<'a, Msg>,
+    questions_view: Element<'a, Msg>,
 ) -> Element<'a, Msg> {
-    let questions_content = Column::new()
-        .max_width(540)
-        .spacing(20)
-        .padding(20)
-        .push(content)
-        .push(Space::with_height(Length::Fill))
-        .push(controls);
-
-    let questions_view = Container::new(questions_content)
-        .height(Length::Fill)
-        .width(Length::Fill)
-        .center_x()
-        .center_y();
-
     Row::new()
         .push(questions_labels)
         .push(questions_view)
@@ -32,7 +17,27 @@ pub(crate) fn build_content<'a>(
         .into()
 }
 
-pub(crate) fn questions_labels<'a>(questions_labels: &'a mut [button::State]) -> Element<'a, Msg> {
+pub(crate) fn question_view<'a>(
+    content: Element<'a, Msg>,
+    controls: Element<'a, Msg>,
+) -> Element<'a, Msg> {
+    let question_with_controls = Column::new()
+        .max_width(540)
+        .spacing(20)
+        .padding(20)
+        .push(content)
+        .push(Space::with_height(Length::Fill))
+        .push(controls);
+
+    Container::new(question_with_controls)
+        .height(Length::Fill)
+        .width(Length::Fill)
+        .center_x()
+        .center_y()
+        .into()
+}
+
+pub(crate) fn questions_list<'a>(questions_labels: &'a mut [button::State]) -> Element<'a, Msg> {
     let mut column_content = Column::new();
     for (idx, question) in questions_labels.iter_mut().enumerate() {
         column_content = column_content.push(

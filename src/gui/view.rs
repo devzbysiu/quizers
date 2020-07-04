@@ -1,4 +1,4 @@
-use crate::gui::helpers::{build_content, button, controls, questions_labels, radio};
+use crate::gui::helpers::{build_view, button, controls, question_view, questions_list, radio};
 use crate::gui::quizers::Msg;
 use conv::prelude::*;
 use iced::{button, Column, Element, Text};
@@ -13,10 +13,9 @@ pub(crate) fn first_question<'a>(
 ) -> Element<'a, Msg> {
     let back = button(back_button, "Back");
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
-    build_content(
-        questions_labels(labels),
-        radio(question, selected_answer),
-        controls(back, next),
+    build_view(
+        questions_list(labels),
+        question_view(radio(question, selected_answer), controls(back, next)),
     )
 }
 
@@ -29,10 +28,9 @@ pub(crate) fn middle_question<'a>(
 ) -> Element<'a, Msg> {
     let back = button(back_button, "Back").on_press(Msg::BackPressed);
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
-    build_content(
-        questions_labels(labels),
-        radio(question, selected_answer),
-        controls(back, next),
+    build_view(
+        questions_list(labels),
+        question_view(radio(question, selected_answer), controls(back, next)),
     )
 }
 
@@ -45,10 +43,9 @@ pub(crate) fn last_question<'a>(
 ) -> Element<'a, Msg> {
     let back = button(back_button, "Back");
     let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
-    build_content(
-        questions_labels(labels),
-        radio(question, selected_answer),
-        controls(back, finish),
+    build_view(
+        questions_list(labels),
+        question_view(radio(question, selected_answer), controls(back, finish)),
     )
 }
 
@@ -77,9 +74,8 @@ pub(crate) fn results<'a>(
             / f64::value_from(questions.len()).expect("failed to convert from usize to f64")
     );
     let results_section = Column::new().spacing(20).push(Text::new(result));
-    build_content(
-        questions_labels(labels),
-        results_section.into(),
-        controls(back, restart),
+    build_view(
+        questions_list(labels),
+        question_view(results_section.into(), controls(back, restart)),
     )
 }
