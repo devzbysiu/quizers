@@ -1,6 +1,6 @@
 use crate::gui::style;
 use crate::gui::view::{first_question, last_question, middle_question, results};
-use iced::{button, Column, Container, Element, Length, Row, Sandbox, Text};
+use iced::{button, Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
 
@@ -16,18 +16,22 @@ enum PageModel {
     FirstQuestion {
         back_button: button::State,
         next_button: button::State,
+        questions_labels: Vec<button::State>,
     },
     MiddleQuestion {
         back_button: button::State,
         next_button: button::State,
+        questions_labels: Vec<button::State>,
     },
     LastQuestion {
         back_button: button::State,
         finish_button: button::State,
+        questions_labels: Vec<button::State>,
     },
     Results {
         back_button: button::State,
         restart_button: button::State,
+        questions_labels: Vec<button::State>,
     },
 }
 
@@ -40,68 +44,52 @@ pub(crate) struct Quizers {
 
 impl Quizers {
     fn inner_view(&'_ mut self) -> Element<'_, Msg> {
-        let questions_content = match &mut self.current_page {
+        match &mut self.current_page {
             PageModel::FirstQuestion {
                 back_button,
                 next_button,
+                questions_labels,
             } => first_question(
                 back_button,
                 next_button,
+                questions_labels,
                 &self.questions[self.question_idx],
                 self.selected_answers[self.question_idx],
             ),
             PageModel::MiddleQuestion {
                 back_button,
                 next_button,
+                questions_labels,
             } => middle_question(
                 back_button,
                 next_button,
+                questions_labels,
                 &self.questions[self.question_idx],
                 self.selected_answers[self.question_idx],
             ),
             PageModel::LastQuestion {
                 back_button,
                 finish_button,
+                questions_labels,
             } => last_question(
                 back_button,
                 finish_button,
+                questions_labels,
                 &self.questions[self.question_idx],
                 self.selected_answers[self.question_idx],
             ),
             PageModel::Results {
                 back_button,
                 restart_button,
+                questions_labels,
             } => results(
                 back_button,
                 restart_button,
+                questions_labels,
                 &self.questions,
                 &self.selected_answers,
             ),
-        };
-
-        let column_content = Column::new()
-            .push(Text::new("Question 1"))
-            .push(Text::new("Question 2"))
-            .push(Text::new("Question 3"))
-            .push(Text::new("Question 4"));
-
-        let questions_column = Container::new(column_content)
-            .height(Length::Fill)
-            .width(Length::from(150))
-            .style(style::QuestionsColumn)
-            .center_y();
-
-        let questions_view = Container::new(questions_content)
-            .height(Length::Fill)
-            .width(Length::Fill)
-            .center_x()
-            .center_y();
-
-        Row::new()
-            .push(questions_column)
-            .push(questions_view)
-            .spacing(50)
-            .into()
+        }
     }
 }
 
@@ -116,6 +104,7 @@ impl Sandbox for Quizers {
             current_page: PageModel::FirstQuestion {
                 back_button: button::State::new(),
                 next_button: button::State::new(),
+                questions_labels: vec![button::State::new(); questions.len()],
             },
             question_idx: 0,
             selected_answers: vec![None; questions.len()],
@@ -135,10 +124,12 @@ impl Sandbox for Quizers {
                     x if x == 0 => PageModel::FirstQuestion {
                         back_button: button::State::new(),
                         next_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
                     },
                     _ => PageModel::MiddleQuestion {
                         back_button: button::State::new(),
                         next_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
                     },
                 };
             }
@@ -148,10 +139,12 @@ impl Sandbox for Quizers {
                     x if x == self.questions.len() - 1 => PageModel::LastQuestion {
                         back_button: button::State::new(),
                         finish_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
                     },
                     _ => PageModel::MiddleQuestion {
                         back_button: button::State::new(),
                         next_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
                     },
                 };
             }
@@ -162,6 +155,7 @@ impl Sandbox for Quizers {
                 self.current_page = PageModel::Results {
                     back_button: button::State::new(),
                     restart_button: button::State::new(),
+                    questions_labels: vec![button::State::new(); self.questions.len()],
                 }
             }
         }

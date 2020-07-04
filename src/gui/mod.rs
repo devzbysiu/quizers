@@ -73,4 +73,25 @@ pub(crate) mod style {
             }
         }
     }
+
+    pub struct QuestionLabel;
+
+    impl button::StyleSheet for QuestionLabel {
+        fn active(&self) -> button::Style {
+            button::Style {
+                background: Some(Background::Color(Color::from_rgb8(82, 84, 87))),
+                border_radius: 0,
+                text_color: Color::WHITE,
+                ..button::Style::default()
+            }
+        }
+
+        fn hovered(&self) -> button::Style {
+            button::Style {
+                text_color: Color::WHITE,
+                shadow_offset: Vector::new(1.0, 2.0),
+                ..self.active()
+            }
+        }
+    }
 }
