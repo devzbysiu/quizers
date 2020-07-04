@@ -92,7 +92,10 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Element<'a, Msg> {
+pub(crate) fn question_text<'a>(
+    question: &Question,
+    selected_answer: Option<usize>,
+) -> Element<'a, Msg> {
     let q = Column::new()
         .padding(20)
         .spacing(10)
