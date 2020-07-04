@@ -14,8 +14,10 @@ pub(crate) fn build_content<'a>(
     let mut column_content = Column::new();
 
     for (idx, question) in questions_labels.iter_mut().enumerate() {
-        column_content =
-            column_content.push(question_label(question, &format!("Question {}", idx + 1)));
+        column_content = column_content.push(
+            question_label(question, &format!("Question {}", idx + 1))
+                .on_press(Msg::GoToQuestion(idx)),
+        );
         column_content = column_content.push(Space::with_height(Length::from(10)));
     }
 

@@ -10,6 +10,7 @@ pub(crate) enum Msg {
     BackPressed,
     NextPressed,
     ShowResults,
+    GoToQuestion(usize),
 }
 
 enum PageModel {
@@ -158,6 +159,7 @@ impl Sandbox for Quizers {
                     questions_labels: vec![button::State::new(); self.questions.len()],
                 }
             }
+            Msg::GoToQuestion(idx) => self.question_idx = idx,
         }
     }
 
