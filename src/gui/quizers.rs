@@ -1,6 +1,6 @@
 use crate::gui::style;
 use crate::gui::view::{first_question, last_question, middle_question, results};
-use iced::{button, Container, Element, Length, Sandbox};
+use iced::{button, Container, Element, Length, Row, Sandbox, Text};
 use md_questions::Questions;
 use std::fs::read_to_string;
 
@@ -39,7 +39,7 @@ pub(crate) struct Quizers {
 }
 
 impl Quizers {
-    fn inner_view(&'_ mut self) -> Element<'_, Msg> {
+    fn questions_view(&'_ mut self) -> Element<'_, Msg> {
         match &mut self.current_page {
             PageModel::FirstQuestion {
                 back_button,
@@ -144,11 +144,27 @@ impl Sandbox for Quizers {
     }
 
     fn view(&mut self) -> Element<Msg> {
-        Container::new(self.inner_view())
+        let questions_column = Container::new(Text::new("test"))
+            .height(Length::Fill)
+            .width(Length::from(150))
+            .style(style::QuestionsColumn)
+            .center_y();
+
+        let questions_view = Container::new(self.questions_view())
+            .height(Length::Fill)
+            .width(Length::Fill)
+            .center_x()
+            .center_y();
+
+        let row = Row::new()
+            .push(questions_column)
+            .push(questions_view)
+            .spacing(50);
+
+        Container::new(row)
             .height(Length::Fill)
             .width(Length::Fill)
             .center_y()
-            .center_x()
             .style(style::Container)
             .into()
     }

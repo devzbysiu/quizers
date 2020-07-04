@@ -41,6 +41,18 @@ pub(crate) mod style {
         }
     }
 
+    pub struct QuestionsColumn;
+
+    impl container::StyleSheet for QuestionsColumn {
+        fn style(&self) -> container::Style {
+            container::Style {
+                background: Some(Background::Color(Color::from_rgb8(82, 84, 87))),
+                text_color: Some(Color::WHITE),
+                ..container::Style::default()
+            }
+        }
+    }
+
     pub struct Button;
 
     impl button::StyleSheet for Button {
