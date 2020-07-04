@@ -4,6 +4,8 @@ use iced::{button, Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
 
+pub(crate) type Elem<'a> = Element<'a, Msg>;
+
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
     Answer(usize),

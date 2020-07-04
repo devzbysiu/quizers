@@ -1,9 +1,9 @@
 use crate::gui::helpers::{
     build_view, button, controls, question_text, question_view, questions_list,
 };
-use crate::gui::quizers::Msg;
+use crate::gui::quizers::{Elem, Msg};
 use conv::prelude::*;
-use iced::{button, Column, Element, Text};
+use iced::{button, Column, Text};
 use md_questions::{Question, Questions};
 
 pub(crate) fn first_question<'a>(
@@ -12,7 +12,7 @@ pub(crate) fn first_question<'a>(
     labels: &'a mut [button::State],
     question: &'a Question,
     selected_answer: Option<usize>,
-) -> Element<'a, Msg> {
+) -> Elem<'a> {
     let back = button(back_button, "Back");
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
@@ -30,7 +30,7 @@ pub(crate) fn middle_question<'a>(
     labels: &'a mut [button::State],
     question: &'a Question,
     selected_answer: Option<usize>,
-) -> Element<'a, Msg> {
+) -> Elem<'a> {
     let back = button(back_button, "Back").on_press(Msg::BackPressed);
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
@@ -48,7 +48,7 @@ pub(crate) fn last_question<'a>(
     labels: &'a mut [button::State],
     question: &'a Question,
     selected_answer: Option<usize>,
-) -> Element<'a, Msg> {
+) -> Elem<'a> {
     let back = button(back_button, "Back");
     let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
     build_view(
@@ -66,7 +66,7 @@ pub(crate) fn results<'a>(
     labels: &'a mut [button::State],
     questions: &Questions,
     selected_answers: &[Option<usize>],
-) -> Element<'a, Msg> {
+) -> Elem<'a> {
     let back = button(back_button, "Back");
     let restart = button(restart_button, "Restart");
 

@@ -1,28 +1,21 @@
-use crate::gui::quizers::Msg;
+use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
 use iced::{
-    button, Button, Column, Container, Element, HorizontalAlignment, Length, Radio, Row, Space,
-    Text,
+    button, Button, Column, Container, HorizontalAlignment, Length, Radio, Row, Space, Text,
 };
-use md_questions::Question;
+use md_questions::{Answer, Question};
 
-pub(crate) fn build_view<'a>(
-    questions_labels: Element<'a, Msg>,
-    questions_view: Element<'a, Msg>,
-) -> Element<'a, Msg> {
+pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>) -> Elem<'a> {
     Row::new()
-        .push(questions_labels)
+        .push(questions_list)
         .push(questions_view)
         .spacing(50)
         .into()
 }
 
-pub(crate) fn question_view<'a>(
-    content: Element<'a, Msg>,
-    controls: Element<'a, Msg>,
-) -> Element<'a, Msg> {
+pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'a> {
     let question_with_controls = Column::new()
-        .max_width(540)
+        .width(Length::from(1080))
         .spacing(20)
         .padding(20)
         .push(content)
@@ -37,7 +30,7 @@ pub(crate) fn question_view<'a>(
         .into()
 }
 
-pub(crate) fn questions_list<'a>(questions_labels: &'a mut [button::State]) -> Element<'a, Msg> {
+pub(crate) fn questions_list<'a>(questions_labels: &'a mut [button::State]) -> Elem<'a> {
     let mut column_content = Column::new();
     for (idx, question) in questions_labels.iter_mut().enumerate() {
         column_content = column_content.push(
@@ -71,7 +64,7 @@ pub(crate) fn question_label<'a, Message>(
 pub(crate) fn controls<'a>(
     left_button: Button<'a, Msg>,
     right_button: Button<'a, Msg>,
-) -> Element<'a, Msg> {
+) -> Elem<'a> {
     Row::new()
         .push(left_button)
         .push(Space::with_width(Length::Fill))
@@ -92,31 +85,34 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn question_text<'a>(
-    question: &Question,
-    selected_answer: Option<usize>,
-) -> Element<'a, Msg> {
-    let q = Column::new()
-        .padding(20)
-        .spacing(10)
-        .push((0..question.no_answers()).fold(
-            Column::new().padding(10).spacing(20),
-            |choices, answer| {
-                choices.push(
-                    Radio::new(
-                        answer,
-                        &question.answer(answer).text(),
-                        selected_answer,
-                        Msg::Answer,
-                    )
-                    .style(style::Radio),
-                )
-            },
-        ));
+pub(crate) fn question_text<'a>(question: &Question, selected_answer: Option<usize>) -> Elem<'a> {
     Column::new()
         .spacing(20)
         .push(Text::new("Question").size(50))
         .push(Text::new(&question.text()))
-        .push(q)
+        .push(answers(question.answers(), selected_answer))
+        .into()
+}
+
+fn answers<'a>(answers: &[Answer], selected_answer: Option<usize>) -> Elem<'a> {
+    Column::new()
+        .padding(20)
+        .spacing(10)
+        .push((0..answers.len()).fold(
+            Column::new().padding(10).spacing(20),
+            |choices, answer_idx| {
+                choices.push(radio(
+                    answer_idx,
+                    answers[answer_idx].text(),
+                    selected_answer,
+                ))
+            },
+        ))
+        .into()
+}
+
+fn radio<'a>(answer_idx: usize, answer_text: String, selected_answer: Option<usize>) -> Elem<'a> {
+    Radio::new(answer_idx, &answer_text, selected_answer, Msg::Answer)
+        .style(style::Radio)
         .into()
 }
