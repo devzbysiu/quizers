@@ -87,11 +87,7 @@ pub(crate) mod style {
         }
 
         fn hovered(&self) -> button::Style {
-            button::Style {
-                text_color: Color::WHITE,
-                shadow_offset: Vector::new(1.0, 2.0),
-                ..self.active()
-            }
+            self.active()
         }
     }
 }

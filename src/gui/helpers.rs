@@ -7,26 +7,10 @@ use iced::{
 use md_questions::Question;
 
 pub(crate) fn build_content<'a>(
-    questions_labels: &'a mut [button::State],
+    questions_labels: Element<'a, Msg>,
     content: Element<'a, Msg>,
     controls: Element<'a, Msg>,
 ) -> Element<'a, Msg> {
-    let mut column_content = Column::new();
-
-    for (idx, question) in questions_labels.iter_mut().enumerate() {
-        column_content = column_content.push(
-            question_label(question, &format!("Question {}", idx + 1))
-                .on_press(Msg::GoToQuestion(idx)),
-        );
-        column_content = column_content.push(Space::with_height(Length::from(10)));
-    }
-
-    let questions_column = Container::new(column_content)
-        .height(Length::Fill)
-        .width(Length::from(150))
-        .style(style::QuestionsColumn)
-        .center_y();
-
     let questions_content = Column::new()
         .max_width(540)
         .spacing(20)
@@ -42,21 +26,52 @@ pub(crate) fn build_content<'a>(
         .center_y();
 
     Row::new()
-        .push(questions_column)
+        .push(questions_labels)
         .push(questions_view)
         .spacing(50)
         .into()
+}
+
+pub(crate) fn questions_labels<'a>(questions_labels: &'a mut [button::State]) -> Element<'a, Msg> {
+    let mut column_content = Column::new();
+    for (idx, question) in questions_labels.iter_mut().enumerate() {
+        column_content = column_content.push(
+            question_label(question, &format!("Question {}", idx + 1))
+                .on_press(Msg::GoToQuestion(idx)),
+        );
+        column_content = column_content.push(Space::with_height(Length::from(10)));
+    }
+
+    Container::new(column_content)
+        .height(Length::Fill)
+        .width(Length::from(150))
+        .style(style::QuestionsColumn)
+        .center_y()
+        .into()
+}
+
+pub(crate) fn question_label<'a, Message>(
+    state: &'a mut button::State,
+    label: &str,
+) -> Button<'a, Message> {
+    Button::new(
+        state,
+        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+    )
+    .padding(12)
+    .min_width(150)
+    .style(style::QuestionLabel)
 }
 
 pub(crate) fn controls<'a>(
     left_button: Button<'a, Msg>,
     right_button: Button<'a, Msg>,
 ) -> Element<'a, Msg> {
-    let mut controls = Row::new();
-    controls = controls.push(left_button);
-    controls = controls.push(Space::with_width(Length::Fill));
-    controls = controls.push(right_button);
-    controls.into()
+    Row::new()
+        .push(left_button)
+        .push(Space::with_width(Length::Fill))
+        .push(right_button)
+        .into()
 }
 
 pub(crate) fn button<'a, Message>(
@@ -70,19 +85,6 @@ pub(crate) fn button<'a, Message>(
     .padding(12)
     .min_width(150)
     .style(style::Button)
-}
-
-pub(crate) fn question_label<'a, Message>(
-    state: &'a mut button::State,
-    label: &str,
-) -> Button<'a, Message> {
-    Button::new(
-        state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(100)
-    .style(style::QuestionLabel)
 }
 
 pub(crate) fn radio<'a>(question: &Question, selected_answer: Option<usize>) -> Element<'a, Msg> {
