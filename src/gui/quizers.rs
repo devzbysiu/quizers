@@ -179,7 +179,29 @@ impl Sandbox for Quizers {
                     scroll: scrollable::State::new(),
                 }
             }
-            Msg::GoToQuestion(idx) => self.question_idx = idx,
+            Msg::GoToQuestion(idx) => {
+                self.question_idx = idx;
+                self.current_page = match self.question_idx {
+                    0 => PageModel::FirstQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
+                        scroll: scrollable::State::new(),
+                    },
+                    x if x == self.questions.len() - 1 => PageModel::LastQuestion {
+                        back_button: button::State::new(),
+                        finish_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
+                        scroll: scrollable::State::new(),
+                    },
+                    _ => PageModel::MiddleQuestion {
+                        back_button: button::State::new(),
+                        next_button: button::State::new(),
+                        questions_labels: vec![button::State::new(); self.questions.len()],
+                        scroll: scrollable::State::new(),
+                    },
+                };
+            }
         }
     }
 
