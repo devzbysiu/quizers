@@ -20,7 +20,7 @@ pub(crate) struct Quizers {
 }
 
 impl Quizers {
-    fn inner_view(&'_ mut self) -> Element<'_, Msg> {
+    fn inner_view(&mut self) -> Elem<'_> {
         match &mut self.view.current_page {
             PageModel::FirstQuestion => self.view.first_question(),
             PageModel::MiddleQuestion => self.view.middle_question(),

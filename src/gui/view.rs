@@ -42,7 +42,7 @@ impl View {
         }
     }
 
-    pub(crate) fn first_question<'a>(&'a mut self) -> Elem<'a> {
+    pub(crate) fn first_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
         build_view(
@@ -57,7 +57,7 @@ impl View {
         )
     }
 
-    pub(crate) fn middle_question<'a>(&'a mut self) -> Elem<'a> {
+    pub(crate) fn middle_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back").on_press(Msg::BackPressed);
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
         build_view(
@@ -72,7 +72,7 @@ impl View {
         )
     }
 
-    pub(crate) fn last_question<'a>(&'a mut self) -> Elem<'a> {
+    pub(crate) fn last_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let finish = button(&mut self.finish_button, "Finish").on_press(Msg::ShowResults);
         build_view(
@@ -87,7 +87,7 @@ impl View {
         )
     }
 
-    pub(crate) fn results<'a>(&'a mut self) -> Elem<'a> {
+    pub(crate) fn results(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let restart = button(&mut self.restart_button, "Restart");
         let points = count_points(&self.questions, &self.selected_answers);
