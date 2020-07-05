@@ -38,6 +38,7 @@ impl Quizers {
                 &mut self.scroll,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
+                self.page_idx,
             ),
             page::PageModel::MiddleQuestion {
                 back_button,
@@ -50,6 +51,7 @@ impl Quizers {
                 &mut self.scroll,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
+                self.page_idx,
             ),
             page::PageModel::LastQuestion {
                 back_button,
@@ -62,6 +64,7 @@ impl Quizers {
                 &mut self.scroll,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
+                self.page_idx,
             ),
             page::PageModel::Results {
                 back_button,
@@ -74,6 +77,7 @@ impl Quizers {
                 &mut self.scroll,
                 &self.questions,
                 &self.selected_answers,
+                self.page_idx,
             ),
         }
     }

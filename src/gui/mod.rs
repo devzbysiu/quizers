@@ -91,4 +91,21 @@ pub(crate) mod style {
             self.active()
         }
     }
+
+    pub struct SelectedLabel;
+
+    impl button::StyleSheet for SelectedLabel {
+        fn active(&self) -> button::Style {
+            button::Style {
+                background: Some(Background::Color(Color::from_rgb8(128, 131, 135))),
+                border_radius: 0,
+                text_color: Color::WHITE,
+                ..button::Style::default()
+            }
+        }
+
+        fn hovered(&self) -> button::Style {
+            self.active()
+        }
+    }
 }

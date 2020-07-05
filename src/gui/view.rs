@@ -13,11 +13,12 @@ pub(crate) fn first_question<'a>(
     scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
+    current_question: usize,
 ) -> Elem<'a> {
     let back = button(back_button, "Back");
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
-        questions_list(scroll, labels),
+        questions_list(scroll, labels, current_question),
         question_view(
             question_text(question, selected_answer),
             controls(back, next),
@@ -32,11 +33,12 @@ pub(crate) fn middle_question<'a>(
     scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
+    current_question: usize,
 ) -> Elem<'a> {
     let back = button(back_button, "Back").on_press(Msg::BackPressed);
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
-        questions_list(scroll, labels),
+        questions_list(scroll, labels, current_question),
         question_view(
             question_text(question, selected_answer),
             controls(back, next),
@@ -51,11 +53,12 @@ pub(crate) fn last_question<'a>(
     scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
+    current_question: usize,
 ) -> Elem<'a> {
     let back = button(back_button, "Back");
     let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
     build_view(
-        questions_list(scroll, labels),
+        questions_list(scroll, labels, current_question),
         question_view(
             question_text(question, selected_answer),
             controls(back, finish),
@@ -70,6 +73,7 @@ pub(crate) fn results<'a>(
     scroll: &'a mut scrollable::State,
     questions: &Questions,
     selected_answers: &[Option<usize>],
+    current_question: usize,
 ) -> Elem<'a> {
     let back = button(back_button, "Back");
     let restart = button(restart_button, "Restart");
@@ -78,7 +82,7 @@ pub(crate) fn results<'a>(
     let result = format_result_msg(points, questions.len());
     let results_section = Column::new().spacing(20).push(Text::new(result));
     build_view(
-        questions_list(scroll, labels),
+        questions_list(scroll, labels, current_question),
         question_view(results_section.into(), controls(back, restart)),
     )
 }

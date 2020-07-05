@@ -35,13 +35,16 @@ pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'
 pub(crate) fn questions_list<'a>(
     scroll: &'a mut scrollable::State,
     questions_labels: &'a mut [button::State],
+    selected_question: usize,
 ) -> Elem<'a> {
     let mut column_content = Column::new();
     for (idx, question) in questions_labels.iter_mut().enumerate() {
-        column_content = column_content.push(
-            question_label(question, &format!("Question {}", idx + 1))
-                .on_press(Msg::GoToQuestion(idx)),
-        );
+        let mut label = question_label(question, &format!("Question {}", idx + 1))
+            .on_press(Msg::GoToQuestion(idx));
+        if selected_question == idx {
+            label = label.style(style::SelectedLabel);
+        }
+        column_content = column_content.push(label);
         column_content = column_content.push(Space::with_height(Length::from(10)));
     }
 
