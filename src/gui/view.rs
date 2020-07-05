@@ -5,88 +5,77 @@ use crate::gui::page::State;
 use crate::gui::quizers::{Elem, Msg};
 use conv::prelude::*;
 use iced::{Column, Text};
-use md_questions::{Question, Questions};
+use md_questions::Questions;
 
-pub(crate) fn first_question<'a>(
-    state: &'a mut State,
-    question: &'a Question,
-    selected_answer: Option<usize>,
-    current_question: usize,
-) -> Elem<'a> {
+pub(crate) fn first_question<'a>(state: &'a mut State) -> Elem<'a> {
     let back = button(&mut state.back_button, "Back");
     let next = button(&mut state.next_button, "Next").on_press(Msg::NextPressed);
     build_view(
         questions_list(
             &mut state.scroll,
             &mut state.questions_labels,
-            current_question,
+            state.page_idx,
         ),
         question_view(
-            question_text(question, selected_answer),
+            question_text(
+                &state.questions[state.page_idx],
+                state.selected_answers[state.page_idx],
+            ),
             controls(back, next),
         ),
     )
 }
 
-pub(crate) fn middle_question<'a>(
-    state: &'a mut State,
-    question: &'a Question,
-    selected_answer: Option<usize>,
-    current_question: usize,
-) -> Elem<'a> {
+pub(crate) fn middle_question<'a>(state: &'a mut State) -> Elem<'a> {
     let back = button(&mut state.back_button, "Back").on_press(Msg::BackPressed);
     let next = button(&mut state.next_button, "Next").on_press(Msg::NextPressed);
     build_view(
         questions_list(
             &mut state.scroll,
             &mut state.questions_labels,
-            current_question,
+            state.page_idx,
         ),
         question_view(
-            question_text(question, selected_answer),
+            question_text(
+                &state.questions[state.page_idx],
+                state.selected_answers[state.page_idx],
+            ),
             controls(back, next),
         ),
     )
 }
 
-pub(crate) fn last_question<'a>(
-    state: &'a mut State,
-    question: &'a Question,
-    selected_answer: Option<usize>,
-    current_question: usize,
-) -> Elem<'a> {
+pub(crate) fn last_question<'a>(state: &'a mut State) -> Elem<'a> {
     let back = button(&mut state.back_button, "Back");
     let finish = button(&mut state.finish_button, "Finish").on_press(Msg::ShowResults);
     build_view(
         questions_list(
             &mut state.scroll,
             &mut state.questions_labels,
-            current_question,
+            state.page_idx,
         ),
         question_view(
-            question_text(question, selected_answer),
+            question_text(
+                &state.questions[state.page_idx],
+                state.selected_answers[state.page_idx],
+            ),
             controls(back, finish),
         ),
     )
 }
 
-pub(crate) fn results<'a>(
-    state: &'a mut State,
-    questions: &Questions,
-    selected_answers: &[Option<usize>],
-    current_question: usize,
-) -> Elem<'a> {
+pub(crate) fn results<'a>(state: &'a mut State) -> Elem<'a> {
     let back = button(&mut state.back_button, "Back");
     let restart = button(&mut state.restart_button, "Restart");
 
-    let points = count_points(questions, selected_answers);
-    let result = format_result_msg(points, questions.len());
+    let points = count_points(&state.questions, &state.selected_answers);
+    let result = format_result_msg(points, state.questions.len());
     let results_section = Column::new().spacing(20).push(Text::new(result));
     build_view(
         questions_list(
             &mut state.scroll,
             &mut state.questions_labels,
-            current_question,
+            state.page_idx,
         ),
         question_view(results_section.into(), controls(back, restart)),
     )

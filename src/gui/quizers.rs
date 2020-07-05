@@ -18,47 +18,24 @@ pub(crate) enum Msg {
 
 pub(crate) struct Quizers {
     current_page: page::PageModel,
-    page_idx: usize,
-    selected_answers: Vec<Option<usize>>,
-    questions: Questions,
     state: page::State,
 }
 
 impl Quizers {
     fn inner_view(&'_ mut self) -> Element<'_, Msg> {
         match &mut self.current_page {
-            page::PageModel::FirstQuestion => view::first_question(
-                &mut self.state,
-                &self.questions[self.page_idx],
-                self.selected_answers[self.page_idx],
-                self.page_idx,
-            ),
-            page::PageModel::MiddleQuestion => view::middle_question(
-                &mut self.state,
-                &self.questions[self.page_idx],
-                self.selected_answers[self.page_idx],
-                self.page_idx,
-            ),
-            page::PageModel::LastQuestion => view::last_question(
-                &mut self.state,
-                &self.questions[self.page_idx],
-                self.selected_answers[self.page_idx],
-                self.page_idx,
-            ),
-            page::PageModel::Results => view::results(
-                &mut self.state,
-                &self.questions,
-                &self.selected_answers,
-                self.page_idx,
-            ),
+            page::PageModel::FirstQuestion => view::first_question(&mut self.state),
+            page::PageModel::MiddleQuestion => view::middle_question(&mut self.state),
+            page::PageModel::LastQuestion => view::last_question(&mut self.state),
+            page::PageModel::Results => view::results(&mut self.state),
         }
     }
 
     fn update_current_page(&mut self) {
-        self.current_page = match self.page_idx {
+        self.current_page = match self.state.page_idx {
             0 => page::PageModel::FirstQuestion,
-            x if x == self.questions.len() - 1 => page::PageModel::LastQuestion,
-            x if x == self.questions.len() => page::PageModel::Results,
+            x if x == self.state.questions.len() - 1 => page::PageModel::LastQuestion,
+            x if x == self.state.questions.len() => page::PageModel::Results,
             _ => page::PageModel::MiddleQuestion,
         }
     }
@@ -73,10 +50,7 @@ impl Sandbox for Quizers {
         let questions = Questions::from(content.as_str());
         Self {
             current_page: page::PageModel::FirstQuestion,
-            state: page::State::new(questions.len()),
-            page_idx: 0,
-            selected_answers: vec![None; questions.len()],
-            questions,
+            state: page::State::new(questions),
         }
     }
 
@@ -86,10 +60,10 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Msg) {
         match event {
-            Msg::BackPressed => self.page_idx -= 1,
-            Msg::NextPressed | Msg::ShowResults => self.page_idx += 1,
-            Msg::Answer(idx) => self.selected_answers[self.page_idx] = Some(idx),
-            Msg::GoToQuestion(idx) => self.page_idx = idx,
+            Msg::BackPressed => self.state.page_idx -= 1,
+            Msg::NextPressed | Msg::ShowResults => self.state.page_idx += 1,
+            Msg::Answer(idx) => self.state.selected_answers[self.state.page_idx] = Some(idx),
+            Msg::GoToQuestion(idx) => self.state.page_idx = idx,
         }
         self.update_current_page();
     }
