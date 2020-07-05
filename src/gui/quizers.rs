@@ -40,7 +40,7 @@ enum PageModel {
 
 pub(crate) struct Quizers {
     current_page: PageModel,
-    question_idx: usize,
+    page_idx: usize,
     selected_answers: Vec<Option<usize>>,
     questions: Questions,
     scroll: scrollable::State,
@@ -58,8 +58,8 @@ impl Quizers {
                 next_button,
                 questions_labels,
                 &mut self.scroll,
-                &self.questions[self.question_idx],
-                self.selected_answers[self.question_idx],
+                &self.questions[self.page_idx],
+                self.selected_answers[self.page_idx],
             ),
             PageModel::MiddleQuestion {
                 back_button,
@@ -70,8 +70,8 @@ impl Quizers {
                 next_button,
                 questions_labels,
                 &mut self.scroll,
-                &self.questions[self.question_idx],
-                self.selected_answers[self.question_idx],
+                &self.questions[self.page_idx],
+                self.selected_answers[self.page_idx],
             ),
             PageModel::LastQuestion {
                 back_button,
@@ -82,8 +82,8 @@ impl Quizers {
                 finish_button,
                 questions_labels,
                 &mut self.scroll,
-                &self.questions[self.question_idx],
-                self.selected_answers[self.question_idx],
+                &self.questions[self.page_idx],
+                self.selected_answers[self.page_idx],
             ),
             PageModel::Results {
                 back_button,
@@ -101,7 +101,7 @@ impl Quizers {
     }
 
     fn update_current_page(&mut self) {
-        self.current_page = match self.question_idx {
+        self.current_page = match self.page_idx {
             0 => PageModel::FirstQuestion {
                 back_button: button::State::new(),
                 next_button: button::State::new(),
@@ -110,6 +110,11 @@ impl Quizers {
             x if x == self.questions.len() - 1 => PageModel::LastQuestion {
                 back_button: button::State::new(),
                 finish_button: button::State::new(),
+                questions_labels: vec![button::State::new(); self.questions.len()],
+            },
+            x if x == self.questions.len() => PageModel::Results {
+                back_button: button::State::new(),
+                restart_button: button::State::new(),
                 questions_labels: vec![button::State::new(); self.questions.len()],
             },
             _ => PageModel::MiddleQuestion {
@@ -134,7 +139,7 @@ impl Sandbox for Quizers {
                 next_button: button::State::new(),
                 questions_labels: vec![button::State::new(); questions.len()],
             },
-            question_idx: 0,
+            page_idx: 0,
             selected_answers: vec![None; questions.len()],
             questions,
             scroll: scrollable::State::new(),
@@ -148,28 +153,22 @@ impl Sandbox for Quizers {
     fn update(&mut self, event: Msg) {
         match event {
             Msg::BackPressed => {
-                self.question_idx -= 1;
-                self.update_current_page();
+                self.page_idx -= 1;
             }
             Msg::NextPressed => {
-                self.question_idx += 1;
-                self.update_current_page();
+                self.page_idx += 1;
             }
             Msg::Answer(idx) => {
-                self.selected_answers[self.question_idx] = Some(idx);
+                self.selected_answers[self.page_idx] = Some(idx);
             }
             Msg::ShowResults => {
-                self.current_page = PageModel::Results {
-                    back_button: button::State::new(),
-                    restart_button: button::State::new(),
-                    questions_labels: vec![button::State::new(); self.questions.len()],
-                }
+                self.page_idx += 1;
             }
             Msg::GoToQuestion(idx) => {
-                self.question_idx = idx;
-                self.update_current_page();
+                self.page_idx = idx;
             }
         }
+        self.update_current_page();
     }
 
     fn view(&mut self) -> Element<Msg> {
