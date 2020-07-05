@@ -99,10 +99,14 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn question_text<'a>(question: &Question, selected_answer: Option<usize>) -> Elem<'a> {
+pub(crate) fn question_text<'a>(
+    question: &Question,
+    selected_answer: Option<usize>,
+    page_idx: usize,
+) -> Elem<'a> {
     Column::new()
         .spacing(20)
-        .push(Text::new("Question").size(50))
+        .push(Text::new(format!("Question {}", page_idx + 1)).size(50))
         .push(Text::new(&question.text()))
         .push(answers(question.answers(), selected_answer))
         .into()

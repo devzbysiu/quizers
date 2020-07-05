@@ -51,6 +51,7 @@ impl View {
                 question_text(
                     &self.questions[self.page_idx],
                     self.selected_answers[self.page_idx],
+                    self.page_idx,
                 ),
                 controls(back, next),
             ),
@@ -66,6 +67,7 @@ impl View {
                 question_text(
                     &self.questions[self.page_idx],
                     self.selected_answers[self.page_idx],
+                    self.page_idx,
                 ),
                 controls(back, next),
             ),
@@ -81,6 +83,7 @@ impl View {
                 question_text(
                     &self.questions[self.page_idx],
                     self.selected_answers[self.page_idx],
+                    self.page_idx,
                 ),
                 controls(back, finish),
             ),
