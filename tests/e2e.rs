@@ -1,7 +1,6 @@
-use assert_gui::Gui;
 use assert_gui::GuiError;
+use assert_gui::{Gui, OpenedGui};
 
-const FIRST_ANSWER: (f64, f64) = (480.0, 200.0);
 const NEXT_BUTTON: (f64, f64) = (1644.0, 1043.0);
 const START_POINT: (f64, f64) = (154.0, 2.0);
 const END_POINT: (f64, f64) = (1919.0, 1079.0);
@@ -16,16 +15,48 @@ The content is copied to the initial section of the editable template.
 
 #[test]
 fn test() -> Result<(), GuiError> {
-    Gui::bin("quizers")
-        .open()?
-        .click(FIRST_ANSWER)?
-        .click(NEXT_BUTTON)?
-        .click(NEXT_BUTTON)?
-        .assert()
-        .with_similarity(0.7)
-        .text_from_portion(QUESTION_TXT, START_POINT, END_POINT)?
-        .gui()
-        .kill()?;
-
+    QuizersGui::open()?
+        .nav_to_question(3)?
+        .assert_question(QUESTION_TXT)?
+        .nav_to_question(5)?
+        .close()?;
     Ok(())
+}
+
+struct QuizersGui {
+    gui: OpenedGui,
+    current_question: usize,
+}
+
+impl QuizersGui {
+    fn open() -> Result<Self, GuiError> {
+        Ok(Self {
+            gui: Gui::bin("quizers").open()?,
+            current_question: 0,
+        })
+    }
+
+    fn nav_to_question(mut self, idx: usize) -> Result<Self, GuiError> {
+        let idx = idx - 1 - self.current_question;
+        let mut gui = self.gui.clone();
+        for _ in 0..idx {
+            gui = gui.click(NEXT_BUTTON).unwrap();
+        }
+        self.current_question = idx;
+        Ok(self)
+    }
+
+    fn assert_question<S: Into<String>>(self, txt: S) -> Result<Self, GuiError> {
+        self.gui
+            .clone()
+            .assert()
+            .with_similarity(0.7)
+            .text_from_portion(txt, START_POINT, END_POINT)?;
+        Ok(self)
+    }
+
+    fn close(self) -> Result<(), GuiError> {
+        self.gui.kill()?;
+        Ok(())
+    }
 }
