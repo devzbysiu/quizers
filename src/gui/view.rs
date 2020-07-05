@@ -3,20 +3,21 @@ use crate::gui::helpers::{
 };
 use crate::gui::quizers::{Elem, Msg};
 use conv::prelude::*;
-use iced::{button, Column, Text};
+use iced::{button, scrollable, Column, Text};
 use md_questions::{Question, Questions};
 
 pub(crate) fn first_question<'a>(
     back_button: &'a mut button::State,
     next_button: &'a mut button::State,
     labels: &'a mut [button::State],
+    scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
 ) -> Elem<'a> {
     let back = button(back_button, "Back");
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
-        questions_list(labels),
+        questions_list(scroll, labels),
         question_view(
             question_text(question, selected_answer),
             controls(back, next),
@@ -28,13 +29,14 @@ pub(crate) fn middle_question<'a>(
     back_button: &'a mut button::State,
     next_button: &'a mut button::State,
     labels: &'a mut [button::State],
+    scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
 ) -> Elem<'a> {
     let back = button(back_button, "Back").on_press(Msg::BackPressed);
     let next = button(next_button, "Next").on_press(Msg::NextPressed);
     build_view(
-        questions_list(labels),
+        questions_list(scroll, labels),
         question_view(
             question_text(question, selected_answer),
             controls(back, next),
@@ -46,13 +48,14 @@ pub(crate) fn last_question<'a>(
     back_button: &'a mut button::State,
     finish_button: &'a mut button::State,
     labels: &'a mut [button::State],
+    scroll: &'a mut scrollable::State,
     question: &'a Question,
     selected_answer: Option<usize>,
 ) -> Elem<'a> {
     let back = button(back_button, "Back");
     let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
     build_view(
-        questions_list(labels),
+        questions_list(scroll, labels),
         question_view(
             question_text(question, selected_answer),
             controls(back, finish),
@@ -64,6 +67,7 @@ pub(crate) fn results<'a>(
     back_button: &'a mut button::State,
     restart_button: &'a mut button::State,
     labels: &'a mut [button::State],
+    scroll: &'a mut scrollable::State,
     questions: &Questions,
     selected_answers: &[Option<usize>],
 ) -> Elem<'a> {
@@ -74,7 +78,7 @@ pub(crate) fn results<'a>(
     let result = format_result_msg(points, questions.len());
     let results_section = Column::new().spacing(20).push(Text::new(result));
     build_view(
-        questions_list(labels),
+        questions_list(scroll, labels),
         question_view(results_section.into(), controls(back, restart)),
     )
 }

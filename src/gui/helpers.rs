@@ -1,7 +1,8 @@
 use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
 use iced::{
-    button, Button, Column, Container, HorizontalAlignment, Length, Radio, Row, Space, Text,
+    button, scrollable, Button, Column, Container, HorizontalAlignment, Length, Radio, Row,
+    Scrollable, Space, Text,
 };
 use md_questions::{Answer, Question};
 
@@ -30,7 +31,10 @@ pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'
         .into()
 }
 
-pub(crate) fn questions_list<'a>(questions_labels: &'a mut [button::State]) -> Elem<'a> {
+pub(crate) fn questions_list<'a>(
+    scroll: &'a mut scrollable::State,
+    questions_labels: &'a mut [button::State],
+) -> Elem<'a> {
     let mut column_content = Column::new();
     for (idx, question) in questions_labels.iter_mut().enumerate() {
         column_content = column_content.push(
@@ -40,7 +44,13 @@ pub(crate) fn questions_list<'a>(questions_labels: &'a mut [button::State]) -> E
         column_content = column_content.push(Space::with_height(Length::from(10)));
     }
 
-    Container::new(column_content)
+    let scrollable_column = Scrollable::new(scroll).push(
+        Container::new(column_content)
+            .width(Length::Fill)
+            .center_x(),
+    );
+
+    Container::new(scrollable_column)
         .height(Length::Fill)
         .width(Length::from(150))
         .style(style::QuestionsColumn)
