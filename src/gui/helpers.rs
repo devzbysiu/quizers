@@ -113,7 +113,7 @@ fn answers<'a>(answers: &[Answer], selected_answer: Option<usize>) -> Elem<'a> {
             |choices, answer_idx| {
                 choices.push(radio(
                     answer_idx,
-                    answers[answer_idx].text(),
+                    &answers[answer_idx].text(),
                     selected_answer,
                 ))
             },
@@ -121,8 +121,8 @@ fn answers<'a>(answers: &[Answer], selected_answer: Option<usize>) -> Elem<'a> {
         .into()
 }
 
-fn radio<'a>(answer_idx: usize, answer_text: String, selected_answer: Option<usize>) -> Elem<'a> {
-    Radio::new(answer_idx, &answer_text, selected_answer, Msg::Answer)
+fn radio<'a>(answer_idx: usize, answer_text: &str, selected_answer: Option<usize>) -> Elem<'a> {
+    Radio::new(answer_idx, answer_text, selected_answer, Msg::Answer)
         .style(style::Radio)
         .into()
 }
