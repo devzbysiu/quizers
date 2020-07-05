@@ -1,5 +1,4 @@
 pub(crate) mod helpers;
-pub(crate) mod page;
 pub(crate) mod quizers;
 pub(crate) mod view;
 

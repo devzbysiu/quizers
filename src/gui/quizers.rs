@@ -1,5 +1,5 @@
-use crate::gui::page::{PageModel, View};
 use crate::gui::style;
+use crate::gui::view::{PageModel, View};
 use iced::{Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
@@ -45,9 +45,8 @@ impl Sandbox for Quizers {
     fn new() -> Self {
         let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
             .expect("failed to read questions markdown");
-        let questions = Questions::from(content.as_str());
         Self {
-            view: View::new(questions),
+            view: View::new(Questions::from(content.as_str())),
         }
     }
 
