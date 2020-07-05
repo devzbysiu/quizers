@@ -1,3 +1,4 @@
+use crate::gui::page::PageModel;
 use crate::gui::style;
 use crate::gui::view::{first_question, last_question, middle_question, results};
 use iced::{button, scrollable, Container, Element, Length, Sandbox};
@@ -13,29 +14,6 @@ pub(crate) enum Msg {
     NextPressed,
     ShowResults,
     GoToQuestion(usize),
-}
-
-enum PageModel {
-    FirstQuestion {
-        back_button: button::State,
-        next_button: button::State,
-        questions_labels: Vec<button::State>,
-    },
-    MiddleQuestion {
-        back_button: button::State,
-        next_button: button::State,
-        questions_labels: Vec<button::State>,
-    },
-    LastQuestion {
-        back_button: button::State,
-        finish_button: button::State,
-        questions_labels: Vec<button::State>,
-    },
-    Results {
-        back_button: button::State,
-        restart_button: button::State,
-        questions_labels: Vec<button::State>,
-    },
 }
 
 pub(crate) struct Quizers {
@@ -152,21 +130,11 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Msg) {
         match event {
-            Msg::BackPressed => {
-                self.page_idx -= 1;
-            }
-            Msg::NextPressed => {
-                self.page_idx += 1;
-            }
-            Msg::Answer(idx) => {
-                self.selected_answers[self.page_idx] = Some(idx);
-            }
-            Msg::ShowResults => {
-                self.page_idx += 1;
-            }
-            Msg::GoToQuestion(idx) => {
-                self.page_idx = idx;
-            }
+            Msg::BackPressed => self.page_idx -= 1,
+            Msg::NextPressed => self.page_idx += 1,
+            Msg::Answer(idx) => self.selected_answers[self.page_idx] = Some(idx),
+            Msg::ShowResults => self.page_idx += 1,
+            Msg::GoToQuestion(idx) => self.page_idx = idx,
         }
         self.update_current_page();
     }
