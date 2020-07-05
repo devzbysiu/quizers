@@ -15,7 +15,7 @@ The bundle providing the service needs to export the java package of the service
 
 #[test]
 fn test() -> Result<(), GuiError> {
-    Gui::bin("quizers")?
+    Gui::bin("quizers")
         .open()?
         .click(FIRST_ANSWER)?
         .click(NEXT_BUTTON)?
