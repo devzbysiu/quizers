@@ -22,6 +22,7 @@ fn test() -> Result<(), GuiError> {
         .click(NEXT_BUTTON)?
         .click(NEXT_BUTTON)?
         .assert()
+        .with_similarity(0.7)
         .text_from_portion(QUESTION_TXT, START_POINT, END_POINT)?
         .gui()
         .kill()?;
