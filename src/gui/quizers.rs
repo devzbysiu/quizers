@@ -1,7 +1,7 @@
 use crate::gui::page;
 use crate::gui::style;
 use crate::gui::view;
-use iced::{scrollable, Container, Element, Length, Sandbox};
+use iced::{Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
 
@@ -21,60 +21,32 @@ pub(crate) struct Quizers {
     page_idx: usize,
     selected_answers: Vec<Option<usize>>,
     questions: Questions,
-    scroll: scrollable::State,
+    state: page::State,
 }
 
 impl Quizers {
     fn inner_view(&'_ mut self) -> Element<'_, Msg> {
         match &mut self.current_page {
-            page::PageModel::FirstQuestion {
-                back_button,
-                next_button,
-                questions_labels,
-            } => view::first_question(
-                back_button,
-                next_button,
-                questions_labels,
-                &mut self.scroll,
+            page::PageModel::FirstQuestion => view::first_question(
+                &mut self.state,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
                 self.page_idx,
             ),
-            page::PageModel::MiddleQuestion {
-                back_button,
-                next_button,
-                questions_labels,
-            } => view::middle_question(
-                back_button,
-                next_button,
-                questions_labels,
-                &mut self.scroll,
+            page::PageModel::MiddleQuestion => view::middle_question(
+                &mut self.state,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
                 self.page_idx,
             ),
-            page::PageModel::LastQuestion {
-                back_button,
-                finish_button,
-                questions_labels,
-            } => view::last_question(
-                back_button,
-                finish_button,
-                questions_labels,
-                &mut self.scroll,
+            page::PageModel::LastQuestion => view::last_question(
+                &mut self.state,
                 &self.questions[self.page_idx],
                 self.selected_answers[self.page_idx],
                 self.page_idx,
             ),
-            page::PageModel::Results {
-                back_button,
-                restart_button,
-                questions_labels,
-            } => view::results(
-                back_button,
-                restart_button,
-                questions_labels,
-                &mut self.scroll,
+            page::PageModel::Results => view::results(
+                &mut self.state,
                 &self.questions,
                 &self.selected_answers,
                 self.page_idx,
@@ -84,10 +56,10 @@ impl Quizers {
 
     fn update_current_page(&mut self) {
         self.current_page = match self.page_idx {
-            0 => page::first_question(self.questions.len()),
-            x if x == self.questions.len() - 1 => page::last_question(self.questions.len()),
-            x if x == self.questions.len() => page::results(self.questions.len()),
-            _ => page::middle_question(self.questions.len()),
+            0 => page::PageModel::FirstQuestion,
+            x if x == self.questions.len() - 1 => page::PageModel::LastQuestion,
+            x if x == self.questions.len() => page::PageModel::Results,
+            _ => page::PageModel::MiddleQuestion,
         }
     }
 }
@@ -100,11 +72,11 @@ impl Sandbox for Quizers {
             .expect("failed to read questions markdown");
         let questions = Questions::from(content.as_str());
         Self {
-            current_page: page::first_question(questions.len()),
+            current_page: page::PageModel::FirstQuestion,
+            state: page::State::new(questions.len()),
             page_idx: 0,
             selected_answers: vec![None; questions.len()],
             questions,
-            scroll: scrollable::State::new(),
         }
     }
 
