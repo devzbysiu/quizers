@@ -1,6 +1,5 @@
-use crate::gui::page;
-use crate::gui::style;
-use crate::gui::view;
+use crate::gui::page::{PageModel, State};
+use crate::gui::{style, view};
 use iced::{Container, Element, Length, Sandbox};
 use md_questions::Questions;
 use std::fs::read_to_string;
@@ -17,26 +16,26 @@ pub(crate) enum Msg {
 }
 
 pub(crate) struct Quizers {
-    current_page: page::PageModel,
-    state: page::State,
+    current_page: PageModel,
+    state: State,
 }
 
 impl Quizers {
     fn inner_view(&'_ mut self) -> Element<'_, Msg> {
         match &mut self.current_page {
-            page::PageModel::FirstQuestion => view::first_question(&mut self.state),
-            page::PageModel::MiddleQuestion => view::middle_question(&mut self.state),
-            page::PageModel::LastQuestion => view::last_question(&mut self.state),
-            page::PageModel::Results => view::results(&mut self.state),
+            PageModel::FirstQuestion => view::first_question(&mut self.state),
+            PageModel::MiddleQuestion => view::middle_question(&mut self.state),
+            PageModel::LastQuestion => view::last_question(&mut self.state),
+            PageModel::Results => view::results(&mut self.state),
         }
     }
 
     fn update_current_page(&mut self) {
         self.current_page = match self.state.page_idx {
-            0 => page::PageModel::FirstQuestion,
-            x if x == self.state.questions.len() - 1 => page::PageModel::LastQuestion,
-            x if x == self.state.questions.len() => page::PageModel::Results,
-            _ => page::PageModel::MiddleQuestion,
+            0 => PageModel::FirstQuestion,
+            x if x == self.state.questions.len() - 1 => PageModel::LastQuestion,
+            x if x == self.state.questions.len() => PageModel::Results,
+            _ => PageModel::MiddleQuestion,
         }
     }
 }
@@ -49,8 +48,8 @@ impl Sandbox for Quizers {
             .expect("failed to read questions markdown");
         let questions = Questions::from(content.as_str());
         Self {
-            current_page: page::PageModel::FirstQuestion,
-            state: page::State::new(questions),
+            current_page: PageModel::FirstQuestion,
+            state: State::new(questions),
         }
     }
 
