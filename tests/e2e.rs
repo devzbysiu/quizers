@@ -1,8 +1,8 @@
 use assert_gui::Gui;
 use assert_gui::GuiError;
 
-const FIRST_ANSWER: (f64, f64) = (757.0, 321.0);
-const NEXT_BUTTON: (f64, f64) = (1151.0, 1032.0);
+const FIRST_ANSWER: (f64, f64) = (672.0, 243.0);
+const NEXT_BUTTON: (f64, f64) = (1506.0, 1043.0);
 
 const QUESTION_TXT: &str = r#"A developer is working on a complex project with multiple bundles. One bundle provides an OSGi service for other bundles. Which two options are necessary to ensure that the other bundles can reference that OSGi service? (Choose two.)
 

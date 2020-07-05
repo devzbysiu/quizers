@@ -16,7 +16,8 @@ pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>)
 
 pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'a> {
     let question_with_controls = Column::new()
-        .width(Length::from(1080))
+        .max_width(1366)
+        .width(Length::Fill)
         .spacing(20)
         .padding(20)
         .push(content)
@@ -108,16 +109,15 @@ fn answers<'a>(answers: &[Answer], selected_answer: Option<usize>) -> Elem<'a> {
     Column::new()
         .padding(20)
         .spacing(10)
-        .push((0..answers.len()).fold(
-            Column::new().padding(10).spacing(20),
-            |choices, answer_idx| {
+        .push(
+            (0..answers.len()).fold(Column::new().spacing(20), |choices, answer_idx| {
                 choices.push(radio(
                     answer_idx,
                     &answers[answer_idx].text(),
                     selected_answer,
                 ))
-            },
-        ))
+            }),
+        )
         .into()
 }
 
