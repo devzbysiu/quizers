@@ -99,6 +99,26 @@ impl Quizers {
             ),
         }
     }
+
+    fn update_current_page(&mut self) {
+        self.current_page = match self.question_idx {
+            0 => PageModel::FirstQuestion {
+                back_button: button::State::new(),
+                next_button: button::State::new(),
+                questions_labels: vec![button::State::new(); self.questions.len()],
+            },
+            x if x == self.questions.len() - 1 => PageModel::LastQuestion {
+                back_button: button::State::new(),
+                finish_button: button::State::new(),
+                questions_labels: vec![button::State::new(); self.questions.len()],
+            },
+            _ => PageModel::MiddleQuestion {
+                back_button: button::State::new(),
+                next_button: button::State::new(),
+                questions_labels: vec![button::State::new(); self.questions.len()],
+            },
+        }
+    }
 }
 
 impl Sandbox for Quizers {
@@ -129,33 +149,11 @@ impl Sandbox for Quizers {
         match event {
             Msg::BackPressed => {
                 self.question_idx -= 1;
-                self.current_page = match self.question_idx {
-                    x if x == 0 => PageModel::FirstQuestion {
-                        back_button: button::State::new(),
-                        next_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                    _ => PageModel::MiddleQuestion {
-                        back_button: button::State::new(),
-                        next_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                };
+                self.update_current_page();
             }
             Msg::NextPressed => {
                 self.question_idx += 1;
-                self.current_page = match self.question_idx {
-                    x if x == self.questions.len() - 1 => PageModel::LastQuestion {
-                        back_button: button::State::new(),
-                        finish_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                    _ => PageModel::MiddleQuestion {
-                        back_button: button::State::new(),
-                        next_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                };
+                self.update_current_page();
             }
             Msg::Answer(idx) => {
                 self.selected_answers[self.question_idx] = Some(idx);
@@ -169,23 +167,7 @@ impl Sandbox for Quizers {
             }
             Msg::GoToQuestion(idx) => {
                 self.question_idx = idx;
-                self.current_page = match self.question_idx {
-                    0 => PageModel::FirstQuestion {
-                        back_button: button::State::new(),
-                        next_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                    x if x == self.questions.len() - 1 => PageModel::LastQuestion {
-                        back_button: button::State::new(),
-                        finish_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                    _ => PageModel::MiddleQuestion {
-                        back_button: button::State::new(),
-                        next_button: button::State::new(),
-                        questions_labels: vec![button::State::new(); self.questions.len()],
-                    },
-                };
+                self.update_current_page();
             }
         }
     }
