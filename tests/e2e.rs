@@ -1,11 +1,12 @@
 use assert_gui::GuiError;
 use assert_gui::{Gui, OpenedGui};
+use std::time::Duration;
 
 const NEXT_BUTTON: (f64, f64) = (1644.0, 1043.0);
 const START_POINT: (f64, f64) = (154.0, 2.0);
 const END_POINT: (f64, f64) = (1919.0, 1079.0);
 
-const QUESTION_TXT: &str = r#"The structure section of an editable template has a locked component. What happens to the content of that component when a developer unlocks it?
+const QUESTION_3_TXT: &str = r#"The structure section of an editable template has a locked component. What happens to the content of that component when a developer unlocks it?
 
 The content stays in the same place but it ignored on pages using the template.
 The content is moved to the initial section of the editable template.
@@ -13,12 +14,21 @@ The content is deleted after confirmation from the template author.
 The content is copied to the initial section of the editable template.
 "#;
 
+const QUESTION_58_TXT: &str = r#"A developer needs to upgrade existing components (Proxy Components) based on Core Components Version 1(v1) to Core Components Version 2(v2). How should the developer upgrade to V2 Core Components?
+
+Modify the sling:resourceSuperType property on the proxy component to point to V2 Component.
+Modify the sling:resourceSuperType property on the proxy component to point to V1 Component.
+Create a new Proxy Component and set sling:resourceType property to V2 Core Component.
+Proxy Components will be automatically upgraded to the V2 Core Component on AEM Restart.
+"#;
+
 #[test]
 fn test() -> Result<(), GuiError> {
     QuizersGui::open()?
         .go_to_question(3)?
-        .assert_question(QUESTION_TXT)?
-        .go_to_question(5)?
+        .assert_txt(QUESTION_3_TXT)?
+        .go_to_question(58)?
+        .assert_txt(QUESTION_58_TXT)?
         .close()?;
     Ok(())
 }
@@ -31,7 +41,9 @@ struct QuizersGui {
 impl QuizersGui {
     fn open() -> Result<Self, GuiError> {
         Ok(Self {
-            gui: Gui::bin("quizers").open()?,
+            gui: Gui::bin("quizers")
+                .with_puses(Duration::from_millis(70))
+                .open()?,
             current_question: 0,
         })
     }
@@ -46,7 +58,7 @@ impl QuizersGui {
         Ok(self)
     }
 
-    fn assert_question<S: Into<String>>(self, txt: S) -> Result<Self, GuiError> {
+    fn assert_txt<S: Into<String>>(self, txt: S) -> Result<Self, GuiError> {
         self.gui
             .clone()
             .assert()
