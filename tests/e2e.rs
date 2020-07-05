@@ -16,9 +16,9 @@ The content is copied to the initial section of the editable template.
 #[test]
 fn test() -> Result<(), GuiError> {
     QuizersGui::open()?
-        .nav_to_question(3)?
+        .go_to_question(3)?
         .assert_question(QUESTION_TXT)?
-        .nav_to_question(5)?
+        .go_to_question(5)?
         .close()?;
     Ok(())
 }
@@ -36,7 +36,7 @@ impl QuizersGui {
         })
     }
 
-    fn nav_to_question(mut self, idx: usize) -> Result<Self, GuiError> {
+    fn go_to_question(mut self, idx: usize) -> Result<Self, GuiError> {
         let idx = idx - 1 - self.current_question;
         let mut gui = self.gui.clone();
         for _ in 0..idx {
