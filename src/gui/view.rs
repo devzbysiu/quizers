@@ -2,9 +2,9 @@ use crate::gui::helpers::{
     build_view, button, controls, question_text, question_view, questions_list,
 };
 use crate::gui::quizers::{Elem, Msg};
+use crate::question::Questions;
 use conv::prelude::*;
 use iced::{button, scrollable, Column, Text};
-use md_questions::{Question, Questions};
 
 pub(crate) enum PageModel {
     FirstQuestion,
@@ -20,7 +20,6 @@ pub(crate) struct View {
     pub(crate) restart_button: button::State,
     pub(crate) questions_labels: Vec<button::State>,
     pub(crate) scroll: scrollable::State,
-    pub(crate) selected_answers: Vec<Vec<bool>>,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
     pub(crate) current_page: PageModel,
@@ -33,9 +32,8 @@ impl View {
             next_button: button::State::new(),
             finish_button: button::State::new(),
             restart_button: button::State::new(),
-            questions_labels: vec![button::State::new(); questions.len()],
+            questions_labels: vec![button::State::new(); questions.count()],
             scroll: scrollable::State::new(),
-            selected_answers: vec![vec![false; 5]; questions.len()],
             questions,
             page_idx: 0,
             current_page: PageModel::FirstQuestion,
@@ -48,11 +46,7 @@ impl View {
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
             question_view(
-                question_text(
-                    &self.questions[self.page_idx],
-                    &self.selected_answers[self.page_idx],
-                    self.page_idx,
-                ),
+                question_text(&self.questions[self.page_idx], self.page_idx),
                 controls(back, next),
             ),
         )
@@ -64,11 +58,7 @@ impl View {
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
             question_view(
-                question_text(
-                    &self.questions[self.page_idx],
-                    &self.selected_answers[self.page_idx],
-                    self.page_idx,
-                ),
+                question_text(&self.questions[self.page_idx], self.page_idx),
                 controls(back, next),
             ),
         )
@@ -80,11 +70,7 @@ impl View {
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
             question_view(
-                question_text(
-                    &self.questions[self.page_idx],
-                    &self.selected_answers[self.page_idx],
-                    self.page_idx,
-                ),
+                question_text(&self.questions[self.page_idx], self.page_idx),
                 controls(back, finish),
             ),
         )
@@ -93,8 +79,7 @@ impl View {
     pub(crate) fn results(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let restart = button(&mut self.restart_button, "Restart");
-        let points = count_points(&self.questions, &self.selected_answers);
-        let result = format_result_msg(points, self.questions.len());
+        let result = format_result_msg(&self.questions);
         let results_section = Column::new().spacing(20).push(Text::new(result));
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
@@ -103,42 +88,13 @@ impl View {
     }
 }
 
-fn count_points(questions: &Questions, selected_answers: &[Vec<bool>]) -> u32 {
-    let mut points = 0;
-    for i in 0..questions.len() {
-        points += points_from_question(&questions[i], &selected_answers[i]);
-    }
-    points
-}
-
-fn points_from_question(question: &Question, selected_answers: &[bool]) -> u32 {
-    let mut points = 0;
-    let correct_answers_count = question
-        .answers()
-        .iter()
-        .filter(|answer| answer.is_correct())
-        .count();
-    for j in 0..question.answers().len() {
-        if selected_answers[j] == true {
-            if question.answer(j).is_correct() {
-                points += 1;
-            } else {
-                points = 0;
-            }
-        }
-    }
-    if points == correct_answers_count {
-        1
-    } else {
-        0
-    }
-}
-
-fn format_result_msg(points: u32, questions_count: usize) -> String {
+fn format_result_msg(questions: &Questions) -> String {
+    let points = questions.count_points();
+    let questions_count = questions.count();
     format!(
         "You've got {}/{} ({:.2}%) points",
         points,
-        questions_count,
+        questions.count(),
         f64::value_from(points).expect("failed to convert from usize to f64")
             / f64::value_from(questions_count).expect("failed to convert from usize to f64")
     )

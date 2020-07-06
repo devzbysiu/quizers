@@ -1,10 +1,10 @@
 use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
+use crate::question::Question;
 use iced::{
     button, scrollable, Button, Checkbox, Column, Container, HorizontalAlignment, Length, Radio,
     Row, Scrollable, Space, Text,
 };
-use md_questions::Question;
 
 pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>) -> Elem<'a> {
     Row::new()
@@ -99,16 +99,12 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn question_text<'a>(
-    question: &Question,
-    selected_answers: &[bool],
-    page_idx: usize,
-) -> Elem<'a> {
+pub(crate) fn question_text<'a>(question: &Question, page_idx: usize) -> Elem<'a> {
     Column::new()
         .spacing(20)
         .push(Text::new(format!("Question {}", page_idx + 1)).size(50))
         .push(Text::new(&question.text()))
-        .push(answers(question, selected_answers))
+        .push(answers(question, question.selected_answers()))
         .into()
 }
 
@@ -117,12 +113,12 @@ fn answers<'a>(question: &Question, selected_answers: &[bool]) -> Elem<'a> {
         Column::new()
             .padding(20)
             .spacing(10)
-            .push((0..question.answers().len()).fold(
+            .push((0..question.answers_count()).fold(
                 Column::new().spacing(20),
                 |choices, answer_idx| {
                     choices.push(checkbox(
                         selected_answers[answer_idx],
-                        &question.answers()[answer_idx].text(),
+                        &question.answer_text(answer_idx),
                         answer_idx,
                     ))
                 },
@@ -132,17 +128,17 @@ fn answers<'a>(question: &Question, selected_answers: &[bool]) -> Elem<'a> {
         Column::new()
             .padding(20)
             .spacing(10)
-            .push((0..question.answers().len()).fold(
+            .push((0..question.answers_count()).fold(
                 Column::new().spacing(20),
                 |choices, answer_idx| {
-                    let selected_answer = if selected_answers[answer_idx] == true {
+                    let selected_answer = if selected_answers[answer_idx] {
                         Some(answer_idx)
                     } else {
                         None
                     };
                     choices.push(radio(
                         answer_idx,
-                        &question.answers()[answer_idx].text(),
+                        &question.answer_text(answer_idx),
                         selected_answer,
                     ))
                 },

@@ -1,7 +1,7 @@
 use crate::gui::style;
 use crate::gui::view::{PageModel, View};
+use crate::question::Questions;
 use iced::{Container, Element, Length, Sandbox};
-use md_questions::Questions;
 use std::fs::read_to_string;
 
 pub(crate) type Elem<'a> = Element<'a, Msg>;
@@ -32,10 +32,14 @@ impl Quizers {
     fn update_current_page(&mut self) {
         self.view.current_page = match self.view.page_idx {
             0 => PageModel::FirstQuestion,
-            x if x == self.view.questions.len() - 1 => PageModel::LastQuestion,
-            x if x == self.view.questions.len() => PageModel::Results,
+            x if x == self.view.questions.count() - 1 => PageModel::LastQuestion,
+            x if x == self.view.questions.count() => PageModel::Results,
             _ => PageModel::MiddleQuestion,
         }
+    }
+
+    fn toggle_answer(&mut self, idx: usize) {
+        self.view.questions[self.view.page_idx].toggle_answer(idx);
     }
 }
 
@@ -58,10 +62,7 @@ impl Sandbox for Quizers {
         match event {
             Msg::BackPressed => self.view.page_idx -= 1,
             Msg::NextPressed | Msg::ShowResults => self.view.page_idx += 1,
-            Msg::Answer(idx) => {
-                self.view.selected_answers[self.view.page_idx][idx] =
-                    !self.view.selected_answers[self.view.page_idx][idx];
-            }
+            Msg::Answer(idx) => self.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.page_idx = idx,
         }
         self.update_current_page();
