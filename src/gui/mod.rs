@@ -3,7 +3,7 @@ pub(crate) mod quizers;
 pub(crate) mod view;
 
 pub(crate) mod style {
-    use iced::{button, container, radio, Background, Color, Vector};
+    use iced::{button, checkbox, container, radio, Background, Color, Vector};
 
     const ACTIVE: Color = Color::from_rgb(114_f32 / 255.0, 137_f32 / 255.0, 218_f32 / 255.0);
 
@@ -105,6 +105,27 @@ pub(crate) mod style {
 
         fn hovered(&self) -> button::Style {
             self.active()
+        }
+    }
+
+    pub struct Checkbox;
+
+    impl checkbox::StyleSheet for Checkbox {
+        fn active(&self, _: bool) -> checkbox::Style {
+            checkbox::Style {
+                background: Background::Color(SURFACE),
+                checkmark_color: ACTIVE,
+                border_width: 1,
+                border_color: ACTIVE,
+                border_radius: 3,
+            }
+        }
+
+        fn hovered(&self, is_checked: bool) -> checkbox::Style {
+            checkbox::Style {
+                background: Background::Color(Color { a: 0.5, ..SURFACE }),
+                ..self.active(is_checked)
+            }
         }
     }
 }
