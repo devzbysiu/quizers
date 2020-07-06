@@ -58,7 +58,10 @@ impl Sandbox for Quizers {
         match event {
             Msg::BackPressed => self.view.page_idx -= 1,
             Msg::NextPressed | Msg::ShowResults => self.view.page_idx += 1,
-            Msg::Answer(idx) => self.view.selected_answers[self.view.page_idx] = Some(idx),
+            Msg::Answer(idx) => {
+                self.view.selected_answers[self.view.page_idx][idx] =
+                    !self.view.selected_answers[self.view.page_idx][idx];
+            }
             Msg::GoToQuestion(idx) => self.view.page_idx = idx,
         }
         self.update_current_page();

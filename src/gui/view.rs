@@ -4,7 +4,7 @@ use crate::gui::helpers::{
 use crate::gui::quizers::{Elem, Msg};
 use conv::prelude::*;
 use iced::{button, scrollable, Column, Text};
-use md_questions::Questions;
+use md_questions::{Question, Questions};
 
 pub(crate) enum PageModel {
     FirstQuestion,
@@ -20,7 +20,7 @@ pub(crate) struct View {
     pub(crate) restart_button: button::State,
     pub(crate) questions_labels: Vec<button::State>,
     pub(crate) scroll: scrollable::State,
-    pub(crate) selected_answers: Vec<Option<usize>>,
+    pub(crate) selected_answers: Vec<Vec<bool>>,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
     pub(crate) current_page: PageModel,
@@ -35,7 +35,7 @@ impl View {
             restart_button: button::State::new(),
             questions_labels: vec![button::State::new(); questions.len()],
             scroll: scrollable::State::new(),
-            selected_answers: vec![None; questions.len()],
+            selected_answers: vec![vec![false; 5]; questions.len()],
             questions,
             page_idx: 0,
             current_page: PageModel::FirstQuestion,
@@ -50,7 +50,7 @@ impl View {
             question_view(
                 question_text(
                     &self.questions[self.page_idx],
-                    self.selected_answers[self.page_idx],
+                    &self.selected_answers[self.page_idx],
                     self.page_idx,
                 ),
                 controls(back, next),
@@ -66,7 +66,7 @@ impl View {
             question_view(
                 question_text(
                     &self.questions[self.page_idx],
-                    self.selected_answers[self.page_idx],
+                    &self.selected_answers[self.page_idx],
                     self.page_idx,
                 ),
                 controls(back, next),
@@ -82,7 +82,7 @@ impl View {
             question_view(
                 question_text(
                     &self.questions[self.page_idx],
-                    self.selected_answers[self.page_idx],
+                    &self.selected_answers[self.page_idx],
                     self.page_idx,
                 ),
                 controls(back, finish),
@@ -103,16 +103,31 @@ impl View {
     }
 }
 
-fn count_points(questions: &Questions, selected_answers: &[Option<usize>]) -> u32 {
+fn count_points(questions: &Questions, selected_answers: &[Vec<bool>]) -> u32 {
     let mut points = 0;
     for i in 0..questions.len() {
-        if let Some(idx) = selected_answers[i] {
-            if questions[i].answer(idx).is_correct() {
-                points += 1;
-            }
-        }
+        points += points_from_question(&questions[i], &selected_answers[i]);
     }
     points
+}
+
+fn points_from_question(question: &Question, selected_answers: &[bool]) -> u32 {
+    let mut points = 0;
+    let correct_answers_count = question
+        .answers()
+        .iter()
+        .filter(|answer| answer.is_correct())
+        .count();
+    for j in 0..question.answers().len() {
+        if selected_answers[j] == true && question.answer(j).is_correct() {
+            points += 1;
+        }
+    }
+    if points == correct_answers_count {
+        1
+    } else {
+        0
+    }
 }
 
 fn format_result_msg(points: u32, questions_count: usize) -> String {
