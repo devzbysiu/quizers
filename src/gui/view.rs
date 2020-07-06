@@ -119,8 +119,12 @@ fn points_from_question(question: &Question, selected_answers: &[bool]) -> u32 {
         .filter(|answer| answer.is_correct())
         .count();
     for j in 0..question.answers().len() {
-        if selected_answers[j] == true && question.answer(j).is_correct() {
-            points += 1;
+        if selected_answers[j] == true {
+            if question.answer(j).is_correct() {
+                points += 1;
+            } else {
+                points = 0;
+            }
         }
     }
     if points == correct_answers_count {
