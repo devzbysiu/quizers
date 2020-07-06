@@ -1,6 +1,4 @@
-use crate::gui::helpers::{
-    build_view, button, controls, question_text, question_view, questions_list,
-};
+use crate::gui::helpers::{build_view, button, controls, question_view, questions_list};
 use crate::gui::quizers::{Elem, Msg};
 use crate::question::Questions;
 use conv::prelude::*;
@@ -43,36 +41,30 @@ impl View {
     pub(crate) fn first_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
+        let current_question = &self.questions[self.page_idx];
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            question_view(
-                question_text(&self.questions[self.page_idx], self.page_idx),
-                controls(back, next),
-            ),
+            current_question.view(back, next),
         )
     }
 
     pub(crate) fn middle_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back").on_press(Msg::BackPressed);
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
+        let current_question = &self.questions[self.page_idx];
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            question_view(
-                question_text(&self.questions[self.page_idx], self.page_idx),
-                controls(back, next),
-            ),
+            current_question.view(back, next),
         )
     }
 
     pub(crate) fn last_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let finish = button(&mut self.finish_button, "Finish").on_press(Msg::ShowResults);
+        let current_question = &self.questions[self.page_idx];
         build_view(
             questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            question_view(
-                question_text(&self.questions[self.page_idx], self.page_idx),
-                controls(back, finish),
-            ),
+            current_question.view(back, finish),
         )
     }
 

@@ -1,6 +1,5 @@
 use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
-use crate::question::Question;
 use iced::{
     button, scrollable, Button, Checkbox, Column, Container, HorizontalAlignment, Length, Radio,
     Row, Scrollable, Space, Text,
@@ -99,61 +98,17 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn question_text<'a>(question: &Question, page_idx: usize) -> Elem<'a> {
-    Column::new()
-        .spacing(20)
-        .push(Text::new(format!("Question {}", page_idx + 1)).size(50))
-        .push(Text::new(&question.text()))
-        .push(answers(question, question.selected_answers()))
-        .into()
-}
-
-fn answers<'a>(question: &Question, selected_answers: &[bool]) -> Elem<'a> {
-    if question.is_multi() {
-        Column::new()
-            .padding(20)
-            .spacing(10)
-            .push((0..question.answers_count()).fold(
-                Column::new().spacing(20),
-                |choices, answer_idx| {
-                    choices.push(checkbox(
-                        selected_answers[answer_idx],
-                        &question.answer_text(answer_idx),
-                        answer_idx,
-                    ))
-                },
-            ))
-            .into()
-    } else {
-        Column::new()
-            .padding(20)
-            .spacing(10)
-            .push((0..question.answers_count()).fold(
-                Column::new().spacing(20),
-                |choices, answer_idx| {
-                    let selected_answer = if selected_answers[answer_idx] {
-                        Some(answer_idx)
-                    } else {
-                        None
-                    };
-                    choices.push(radio(
-                        answer_idx,
-                        &question.answer_text(answer_idx),
-                        selected_answer,
-                    ))
-                },
-            ))
-            .into()
-    }
-}
-
-fn radio<'a>(answer_idx: usize, answer_text: &str, selected_answer: Option<usize>) -> Elem<'a> {
+pub(crate) fn radio<'a>(
+    answer_idx: usize,
+    answer_text: &str,
+    selected_answer: Option<usize>,
+) -> Elem<'a> {
     Radio::new(answer_idx, answer_text, selected_answer, Msg::Answer)
         .style(style::Radio)
         .into()
 }
 
-fn checkbox<'a>(is_checked: bool, answer_text: &str, answer_idx: usize) -> Elem<'a> {
+pub(crate) fn checkbox<'a>(is_checked: bool, answer_text: &str, answer_idx: usize) -> Elem<'a> {
     Checkbox::new(is_checked, answer_text, move |_| Msg::Answer(answer_idx))
         .size(25)
         .style(style::Checkbox)
