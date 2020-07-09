@@ -1,9 +1,9 @@
-use crate::gui::helpers::{build_view, button, controls, question_view};
+use crate::gui::helpers::{build_view, button, controls, results_view};
 use crate::gui::quizers::{Elem, Msg};
 use crate::question::Questions;
 use crate::question_list::QuestionList;
 use conv::prelude::*;
-use iced::{button, Column, Text};
+use iced::{button, Button, Column, Text};
 
 pub(crate) enum PageModel {
     FirstQuestion,
@@ -20,6 +20,7 @@ pub(crate) struct View {
     pub(crate) questions_list: QuestionList,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
+    pub(crate) questions_count: usize,
     pub(crate) current_page: PageModel,
 }
 
@@ -31,36 +32,24 @@ impl View {
             finish_button: button::State::new(),
             restart_button: button::State::new(),
             questions_list: QuestionList::new(questions.count()),
+            questions_count: questions.count(),
             questions,
             page_idx: 0,
             current_page: PageModel::FirstQuestion,
         }
     }
 
-    pub(crate) fn first_question(&mut self) -> Elem<'_> {
-        let back = button(&mut self.back_button, "Back");
-        let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
+    pub(crate) fn question(&mut self) -> Elem<'_> {
         build_view(
             self.questions_list.view(self.page_idx),
-            self.questions[self.page_idx].view(back, next),
-        )
-    }
-
-    pub(crate) fn middle_question(&mut self) -> Elem<'_> {
-        let back = button(&mut self.back_button, "Back").on_press(Msg::BackPressed);
-        let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
-        build_view(
-            self.questions_list.view(self.page_idx),
-            self.questions[self.page_idx].view(back, next),
-        )
-    }
-
-    pub(crate) fn last_question(&mut self) -> Elem<'_> {
-        let back = button(&mut self.back_button, "Back");
-        let finish = button(&mut self.finish_button, "Finish").on_press(Msg::ShowResults);
-        build_view(
-            self.questions_list.view(self.page_idx),
-            self.questions[self.page_idx].view(back, finish),
+            self.questions[self.page_idx].view(ctrls(
+                self.page_idx,
+                self.questions_count,
+                &mut self.back_button,
+                &mut self.next_button,
+                &mut self.finish_button,
+                &mut self.restart_button,
+            )),
         )
     }
 
@@ -71,8 +60,40 @@ impl View {
         let results_section = Column::new().spacing(20).push(Text::new(result));
         build_view(
             self.questions_list.view(self.page_idx),
-            question_view(results_section.into(), controls(back, restart)),
+            results_view(results_section.into(), controls(back, restart)),
         )
+    }
+}
+
+fn ctrls<'a>(
+    page_idx: usize,
+    questions_count: usize,
+    back_button: &'a mut button::State,
+    next_button: &'a mut button::State,
+    finish_button: &'a mut button::State,
+    restart_button: &'a mut button::State,
+) -> (Button<'a, Msg>, Button<'a, Msg>) {
+    match page_idx {
+        0 => {
+            let back = button(back_button, "Back");
+            let next = button(next_button, "Next").on_press(Msg::NextPressed);
+            (back.into(), next.into())
+        }
+        x if x == questions_count - 1 => {
+            let back = button(back_button, "Back");
+            let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
+            (back.into(), finish.into())
+        }
+        x if x == questions_count => {
+            let back = button(back_button, "Back");
+            let restart = button(restart_button, "Restart");
+            (back.into(), restart.into())
+        }
+        _ => {
+            let back = button(back_button, "Back").on_press(Msg::BackPressed);
+            let next = button(next_button, "Next").on_press(Msg::NextPressed);
+            (back.into(), next.into())
+        }
     }
 }
 

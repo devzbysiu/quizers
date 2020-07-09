@@ -13,7 +13,7 @@ pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>)
         .into()
 }
 
-pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'a> {
+pub(crate) fn results_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'a> {
     let question_with_controls = Column::new()
         .max_width(1366)
         .width(Length::Fill)

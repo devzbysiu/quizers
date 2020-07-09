@@ -116,11 +116,7 @@ impl Question {
         self.md_question.text()
     }
 
-    pub(crate) fn view<'a>(
-        &self,
-        left_button: Button<'a, Msg>,
-        right_button: Button<'a, Msg>,
-    ) -> Elem<'a> {
+    pub(crate) fn view<'a>(&self, controls: (Button<'a, Msg>, Button<'a, Msg>)) -> Elem<'a> {
         let question_with_controls = Column::new()
             .max_width(1366)
             .width(Length::Fill)
@@ -128,7 +124,7 @@ impl Question {
             .padding(20)
             .push(self.question_text())
             .push(Space::with_height(Length::Fill))
-            .push(Self::controls(left_button, right_button));
+            .push(Self::controls(controls.0, controls.1));
 
         Container::new(question_with_controls)
             .height(Length::Fill)

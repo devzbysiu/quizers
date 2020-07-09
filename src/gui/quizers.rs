@@ -1,4 +1,5 @@
 use crate::gui::style;
+use crate::gui::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results};
 use crate::gui::view::{PageModel, View};
 use crate::question::Questions;
 use iced::{Container, Element, Length, Sandbox};
@@ -22,19 +23,17 @@ pub(crate) struct Quizers {
 impl Quizers {
     fn inner_view(&mut self) -> Elem<'_> {
         match &mut self.view.current_page {
-            PageModel::FirstQuestion => self.view.first_question(),
-            PageModel::MiddleQuestion => self.view.middle_question(),
-            PageModel::LastQuestion => self.view.last_question(),
+            FirstQuestion | MiddleQuestion | LastQuestion => self.view.question(),
             PageModel::Results => self.view.results(),
         }
     }
 
     fn update_current_page(&mut self) {
         self.view.current_page = match self.view.page_idx {
-            0 => PageModel::FirstQuestion,
-            x if x == self.view.questions.count() - 1 => PageModel::LastQuestion,
-            x if x == self.view.questions.count() => PageModel::Results,
-            _ => PageModel::MiddleQuestion,
+            0 => FirstQuestion,
+            x if x == self.view.questions.count() - 1 => LastQuestion,
+            x if x == self.view.questions.count() => Results,
+            _ => MiddleQuestion,
         }
     }
 
