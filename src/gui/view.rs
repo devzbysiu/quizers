@@ -1,8 +1,9 @@
-use crate::gui::helpers::{build_view, button, controls, question_view, questions_list};
+use crate::gui::helpers::{build_view, button, controls, question_view};
 use crate::gui::quizers::{Elem, Msg};
 use crate::question::Questions;
+use crate::question_list::QuestionList;
 use conv::prelude::*;
-use iced::{button, scrollable, Column, Text};
+use iced::{button, Column, Text};
 
 pub(crate) enum PageModel {
     FirstQuestion,
@@ -16,8 +17,7 @@ pub(crate) struct View {
     pub(crate) next_button: button::State,
     pub(crate) finish_button: button::State,
     pub(crate) restart_button: button::State,
-    pub(crate) questions_labels: Vec<button::State>,
-    pub(crate) scroll: scrollable::State,
+    pub(crate) questions_list: QuestionList,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
     pub(crate) current_page: PageModel,
@@ -30,8 +30,7 @@ impl View {
             next_button: button::State::new(),
             finish_button: button::State::new(),
             restart_button: button::State::new(),
-            questions_labels: vec![button::State::new(); questions.count()],
-            scroll: scrollable::State::new(),
+            questions_list: QuestionList::new(questions.count()),
             questions,
             page_idx: 0,
             current_page: PageModel::FirstQuestion,
@@ -41,30 +40,27 @@ impl View {
     pub(crate) fn first_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
-        let current_question = &self.questions[self.page_idx];
         build_view(
-            questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            current_question.view(back, next),
+            self.questions_list.view(self.page_idx),
+            self.questions[self.page_idx].view(back, next),
         )
     }
 
     pub(crate) fn middle_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back").on_press(Msg::BackPressed);
         let next = button(&mut self.next_button, "Next").on_press(Msg::NextPressed);
-        let current_question = &self.questions[self.page_idx];
         build_view(
-            questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            current_question.view(back, next),
+            self.questions_list.view(self.page_idx),
+            self.questions[self.page_idx].view(back, next),
         )
     }
 
     pub(crate) fn last_question(&mut self) -> Elem<'_> {
         let back = button(&mut self.back_button, "Back");
         let finish = button(&mut self.finish_button, "Finish").on_press(Msg::ShowResults);
-        let current_question = &self.questions[self.page_idx];
         build_view(
-            questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
-            current_question.view(back, finish),
+            self.questions_list.view(self.page_idx),
+            self.questions[self.page_idx].view(back, finish),
         )
     }
 
@@ -74,7 +70,7 @@ impl View {
         let result = format_result_msg(&self.questions);
         let results_section = Column::new().spacing(20).push(Text::new(result));
         build_view(
-            questions_list(&mut self.scroll, &mut self.questions_labels, self.page_idx),
+            self.questions_list.view(self.page_idx),
             question_view(results_section.into(), controls(back, restart)),
         )
     }

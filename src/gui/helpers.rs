@@ -1,8 +1,8 @@
 use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
 use iced::{
-    button, scrollable, Button, Checkbox, Column, Container, HorizontalAlignment, Length, Radio,
-    Row, Scrollable, Space, Text,
+    button, Button, Checkbox, Column, Container, HorizontalAlignment, Length, Radio, Row, Space,
+    Text,
 };
 
 pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>) -> Elem<'a> {
@@ -29,49 +29,6 @@ pub(crate) fn question_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'
         .center_x()
         .center_y()
         .into()
-}
-
-pub(crate) fn questions_list<'a>(
-    scroll: &'a mut scrollable::State,
-    questions_labels: &'a mut [button::State],
-    selected_question: usize,
-) -> Elem<'a> {
-    let mut column_content = Column::new();
-    for (idx, question) in questions_labels.iter_mut().enumerate() {
-        let mut label = question_label(question, &format!("Question {}", idx + 1))
-            .on_press(Msg::GoToQuestion(idx));
-        if selected_question == idx {
-            label = label.style(style::SelectedLabel);
-        }
-        column_content = column_content.push(label);
-        column_content = column_content.push(Space::with_height(Length::from(10)));
-    }
-
-    let scrollable_column = Scrollable::new(scroll).push(
-        Container::new(column_content)
-            .width(Length::Fill)
-            .center_x(),
-    );
-
-    Container::new(scrollable_column)
-        .height(Length::Fill)
-        .width(Length::from(150))
-        .style(style::QuestionsColumn)
-        .center_y()
-        .into()
-}
-
-pub(crate) fn question_label<'a, Message>(
-    state: &'a mut button::State,
-    label: &str,
-) -> Button<'a, Message> {
-    Button::new(
-        state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(150)
-    .style(style::QuestionLabel)
 }
 
 pub(crate) fn controls<'a>(

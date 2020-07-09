@@ -3,6 +3,7 @@ use iced::{Sandbox, Settings};
 
 mod gui;
 mod question;
+mod question_list;
 
 fn main() {
     pretty_env_logger::init();
