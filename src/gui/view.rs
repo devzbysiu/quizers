@@ -1,4 +1,4 @@
-use crate::gui::helpers::{build_view, button, controls, results_view};
+use crate::gui::helpers::{build_view, button, results_view};
 use crate::gui::quizers::{Elem, Msg};
 use crate::question::Questions;
 use crate::question_list::QuestionList;
@@ -9,6 +9,7 @@ pub(crate) enum PageModel {
     FirstQuestion,
     MiddleQuestion,
     LastQuestion,
+    Settings,
     Results,
 }
 
@@ -42,26 +43,39 @@ impl View {
     pub(crate) fn question(&mut self) -> Elem<'_> {
         build_view(
             self.questions_list.view(self.page_idx),
-            self.questions[self.page_idx].view(ctrls(
+            self.questions[self.page_idx].view(),
+            ctrls(
                 self.page_idx,
                 self.questions_count,
                 &mut self.back_button,
                 &mut self.next_button,
                 &mut self.finish_button,
                 &mut self.restart_button,
-            )),
+            ),
         )
     }
 
     pub(crate) fn results(&mut self) -> Elem<'_> {
-        let back = button(&mut self.back_button, "Back");
-        let restart = button(&mut self.restart_button, "Restart");
         let result = format_result_msg(&self.questions);
         let results_section = Column::new().spacing(20).push(Text::new(result));
         build_view(
             self.questions_list.view(self.page_idx),
-            results_view(results_section.into(), controls(back, restart)),
+            results_view(results_section.into()),
+            ctrls(
+                self.page_idx,
+                self.questions_count,
+                &mut self.back_button,
+                &mut self.next_button,
+                &mut self.finish_button,
+                &mut self.restart_button,
+            ),
         )
+    }
+
+    pub(crate) fn settings<'a>(&mut self) -> Elem<'a> {
+        let result = format_result_msg(&self.questions);
+        let results_section = Column::new().spacing(20).push(Text::new(result));
+        results_section.into()
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::gui::style;
 use crate::gui::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results};
-use crate::gui::view::{PageModel, View};
+use crate::gui::view::View;
 use crate::question::Questions;
 use iced::{Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
@@ -24,7 +24,8 @@ impl Quizers {
     fn inner_view(&mut self) -> Elem<'_> {
         match &mut self.view.current_page {
             FirstQuestion | MiddleQuestion | LastQuestion => self.view.question(),
-            PageModel::Results => self.view.results(),
+            Results => self.view.results(),
+            Setting => self.view.settings(),
         }
     }
 
@@ -71,7 +72,6 @@ impl Sandbox for Quizers {
         Container::new(self.inner_view())
             .height(Length::Fill)
             .width(Length::Fill)
-            .center_y()
             .style(style::Container)
             .into()
     }

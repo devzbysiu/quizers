@@ -5,40 +5,64 @@ use iced::{
     Text,
 };
 
-pub(crate) fn build_view<'a>(questions_list: Elem<'a>, questions_view: Elem<'a>) -> Elem<'a> {
+pub(crate) fn build_view<'a>(
+    questions_list: Elem<'a>,
+    questions_view: Elem<'a>,
+    controls: (Button<'a, Msg>, Button<'a, Msg>),
+) -> Elem<'a> {
+    let header = Column::new()
+        .max_width(1366)
+        .height(Length::FillPortion(5))
+        .spacing(20)
+        .padding(20)
+        .push(Text::new("header"));
+
+    let question = Column::new()
+        .max_width(1366)
+        .height(Length::FillPortion(70))
+        .spacing(20)
+        .padding(20)
+        .push(questions_view);
+
+    let controls_row = Row::new()
+        .push(controls.0)
+        .push(Space::with_width(Length::Fill))
+        .push(controls.1);
+
+    let controls = Column::new()
+        .max_width(1366)
+        .height(Length::FillPortion(8))
+        .spacing(20)
+        .padding(20)
+        .push(controls_row);
+
+    let main_view: Elem<'a> = Column::new()
+        .push(header)
+        .push(question)
+        .push(controls)
+        .into();
+
     Row::new()
         .push(questions_list)
-        .push(questions_view)
+        .push(main_view)
         .spacing(50)
         .into()
 }
 
-pub(crate) fn results_view<'a>(content: Elem<'a>, controls: Elem<'a>) -> Elem<'a> {
+pub(crate) fn results_view<'a>(content: Elem<'a>) -> Elem<'a> {
     let question_with_controls = Column::new()
         .max_width(1366)
         .width(Length::Fill)
         .spacing(20)
         .padding(20)
         .push(content)
-        .push(Space::with_height(Length::Fill))
-        .push(controls);
+        .push(Space::with_height(Length::Fill));
 
     Container::new(question_with_controls)
         .height(Length::Fill)
         .width(Length::Fill)
         .center_x()
         .center_y()
-        .into()
-}
-
-pub(crate) fn controls<'a>(
-    left_button: Button<'a, Msg>,
-    right_button: Button<'a, Msg>,
-) -> Elem<'a> {
-    Row::new()
-        .push(left_button)
-        .push(Space::with_width(Length::Fill))
-        .push(right_button)
         .into()
 }
 
