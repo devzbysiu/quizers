@@ -1,5 +1,5 @@
-use crate::gui::quizers::{Elem, Msg};
-use crate::gui::style;
+use crate::quizers::{Elem, Msg};
+use crate::style;
 use iced::{
     button, Button, Checkbox, Color, Column, Container, Element, HorizontalAlignment, Length,
     Radio, Row, Space, Text,

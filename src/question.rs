@@ -1,5 +1,5 @@
-use crate::gui::helpers::{checkbox, radio};
-use crate::gui::quizers::Elem;
+use crate::helpers::{checkbox, radio};
+use crate::quizers::Elem;
 use iced::{Column, Container, Length, Text};
 use md_questions::{MdQuestion, MdQuestions};
 use std::mem;

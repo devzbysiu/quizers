@@ -1,5 +1,5 @@
-use crate::gui::quizers::{Elem, Msg};
-use crate::gui::style;
+use crate::quizers::{Elem, Msg};
+use crate::style;
 use iced::{
     button, scrollable, Button, Column, Container, HorizontalAlignment, Length, Scrollable, Space,
     Text,

@@ -1,10 +1,13 @@
-use crate::gui::quizers::Quizers;
+use crate::quizers::Quizers;
 use iced::{Sandbox, Settings};
 
 mod controls;
-mod gui;
+mod helpers;
 mod question;
 mod question_list;
+mod quizers;
+mod style;
+mod view;
 
 fn main() {
     pretty_env_logger::init();

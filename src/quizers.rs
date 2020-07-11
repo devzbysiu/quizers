@@ -1,7 +1,7 @@
-use crate::gui::style;
-use crate::gui::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results};
-use crate::gui::view::View;
 use crate::question::Questions;
+use crate::style;
+use crate::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results};
+use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
 

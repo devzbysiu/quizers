@@ -1,8 +1,8 @@
 use crate::controls::Controls;
-use crate::gui::helpers::{build_view, results_view};
-use crate::gui::quizers::Elem;
+use crate::helpers::{build_view, results_view};
 use crate::question::Questions;
 use crate::question_list::QuestionList;
+use crate::quizers::Elem;
 use conv::prelude::*;
 use iced::{Column, Text};
 
