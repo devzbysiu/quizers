@@ -40,10 +40,6 @@ impl Quizers {
             _ => panic!("no such page"),
         }
     }
-
-    fn toggle_answer(&mut self, idx: usize) {
-        self.view.questions[self.view.page_idx].toggle_answer(idx);
-    }
 }
 
 impl Sandbox for Quizers {
@@ -61,11 +57,11 @@ impl Sandbox for Quizers {
 
     fn update(&mut self, event: Msg) {
         match event {
-            Msg::BackPressed => self.view.page_idx -= 1,
-            Msg::NextPressed | Msg::ShowResults => self.view.page_idx += 1,
-            Msg::Answer(idx) => self.toggle_answer(idx),
-            Msg::GoToQuestion(idx) => self.view.page_idx = idx,
-            Msg::SettingsPressed => self.view.page_idx = self.view.questions.count() + 1,
+            Msg::BackPressed => self.view.go_prev_page(),
+            Msg::NextPressed | Msg::ShowResults => self.view.go_next_page(),
+            Msg::Answer(idx) => self.view.toggle_answer(idx),
+            Msg::GoToQuestion(idx) => self.view.go_page(idx),
+            Msg::SettingsPressed => self.view.go_settings_page(),
         }
         self.update_current_page();
     }

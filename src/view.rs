@@ -60,6 +60,26 @@ impl View {
             .push(Text::new("settings section"))
             .into()
     }
+
+    pub(crate) fn go_next_page(&mut self) {
+        self.page_idx += 1;
+    }
+
+    pub(crate) fn go_prev_page(&mut self) {
+        self.page_idx -= 1;
+    }
+
+    pub(crate) fn go_page(&mut self, page_idx: usize) {
+        self.page_idx = page_idx;
+    }
+
+    pub(crate) fn toggle_answer(&mut self, idx: usize) {
+        self.questions[self.page_idx].toggle_answer(idx);
+    }
+
+    pub(crate) fn go_settings_page(&mut self) {
+        self.page_idx = self.questions.count() + 1;
+    }
 }
 
 fn format_result_msg(questions: &Questions) -> String {
