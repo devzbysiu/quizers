@@ -1,6 +1,6 @@
 use crate::gui::helpers::{checkbox, radio};
-use crate::gui::quizers::{Elem, Msg};
-use iced::{Button, Column, Container, Length, Row, Space, Text};
+use crate::gui::quizers::Elem;
+use iced::{Column, Container, Length, Text};
 use md_questions::{MdQuestion, MdQuestions};
 use std::mem;
 use std::ops::{Index, IndexMut};

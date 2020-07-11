@@ -91,22 +91,22 @@ fn ctrls<'a>(
         0 => {
             let back = button(back_button, "Back");
             let next = button(next_button, "Next").on_press(Msg::NextPressed);
-            (back.into(), next.into())
+            (back, next)
         }
         x if x == questions_count - 1 => {
             let back = button(back_button, "Back");
             let finish = button(finish_button, "Finish").on_press(Msg::ShowResults);
-            (back.into(), finish.into())
+            (back, finish)
         }
         x if x == questions_count => {
             let back = button(back_button, "Back");
             let restart = button(restart_button, "Restart");
-            (back.into(), restart.into())
+            (back, restart)
         }
         _ => {
             let back = button(back_button, "Back").on_press(Msg::BackPressed);
             let next = button(next_button, "Next").on_press(Msg::NextPressed);
-            (back.into(), next.into())
+            (back, next)
         }
     }
 }
