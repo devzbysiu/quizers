@@ -67,7 +67,12 @@ impl Question {
     }
 
     pub(crate) fn toggle_answer(&mut self, idx: usize) {
-        self.selected_answers[idx] = !self.selected_answers[idx];
+        if self.md_question.is_multi() {
+            self.selected_answers[idx] = !self.selected_answers[idx];
+        } else {
+            self.selected_answers = vec![false; self.md_question.answers_count()];
+            self.selected_answers[idx] = true;
+        }
     }
 
     pub(crate) fn points_gained(&self) -> u32 {
