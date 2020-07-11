@@ -1,10 +1,10 @@
 use crate::controls::Controls;
-use crate::gui::helpers::{build_view, button, results_view};
-use crate::gui::quizers::{Elem, Msg};
+use crate::gui::helpers::{build_view, results_view};
+use crate::gui::quizers::Elem;
 use crate::question::Questions;
 use crate::question_list::QuestionList;
 use conv::prelude::*;
-use iced::{button, Button, Column, Text};
+use iced::{Column, Text};
 
 pub(crate) enum PageModel {
     FirstQuestion,
