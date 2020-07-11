@@ -21,7 +21,7 @@ impl Controls {
         }
     }
 
-    pub(crate) fn ctrls<'a>(&'a mut self, page_idx: usize) -> (Button<'a, Msg>, Button<'a, Msg>) {
+    pub(crate) fn ctrls(&mut self, page_idx: usize) -> (Button<'_, Msg>, Button<'_, Msg>) {
         match page_idx {
             0 => {
                 let back = button(&mut self.back_button, "Back");

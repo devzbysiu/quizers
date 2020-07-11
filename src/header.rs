@@ -15,7 +15,7 @@ impl Header {
         }
     }
 
-    pub(crate) fn view<'a>(&'a mut self) -> Elem<'a> {
+    pub(crate) fn view(&mut self) -> Elem<'_> {
         let go_back_button =
             settings_button(&mut self.go_back_button, "<").on_press(Msg::GoBackPressed);
 
@@ -23,7 +23,6 @@ impl Header {
             settings_button(&mut self.settings_button, "S").on_press(Msg::SettingsPressed);
 
         Row::new()
-            .height(Length::FillPortion(1))
             .padding(10)
             .push(go_back_button)
             .push(Space::with_width(Length::Fill))

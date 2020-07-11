@@ -26,18 +26,10 @@ pub(crate) fn build_main_view<'a>(
     )
 }
 
-fn control_bar_container<'a>(control_bar: Elem<'a>) -> Elem<'a> {
-    Container::new(control_bar).style(style::Header).into()
-}
-
-fn question_with_controls_column<'a>(
-    question_column: Elem<'a>,
-    controls_row: Elem<'a>,
-) -> Elem<'a> {
-    Column::new()
-        .padding(25)
-        .push(question_column)
-        .push(controls_row)
+fn control_bar_container(header: Elem<'_>) -> Elem<'_> {
+    Container::new(header)
+        .height(Length::FillPortion(1))
+        .style(style::Header)
         .into()
 }
 
@@ -52,16 +44,28 @@ fn quiz_view_row<'a>(
         .into()
 }
 
-fn questions_list_container<'a>(questions_list: Elem<'a>) -> Elem<'a> {
+fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
     Container::new(questions_list)
         .height(Length::Fill)
-        .width(Length::from(150))
+        .width(Length::FillPortion(1))
         .style(style::QuestionsColumn)
         .center_y()
         .into()
 }
 
-fn question_column<'a>(question_view: Elem<'a>) -> Elem<'a> {
+fn question_with_controls_column<'a>(
+    question_column: Elem<'a>,
+    controls_row: Elem<'a>,
+) -> Elem<'a> {
+    Column::new()
+        .padding(25)
+        .width(Length::FillPortion(9))
+        .push(question_column)
+        .push(controls_row)
+        .into()
+}
+
+fn question_column(question_view: Elem<'_>) -> Elem<'_> {
     Column::new()
         .height(Length::FillPortion(18))
         .push(question_view)
@@ -96,7 +100,7 @@ pub(crate) fn build_settings_view<'a>(
     debug(Row::new().push(settings_list).push(main_view).into())
 }
 
-fn debug<'a>(element: Element<'a, Msg>) -> Element<'a, Msg> {
+fn debug(element: Element<'_, Msg>) -> Element<'_, Msg> {
     let mut element = element;
     match env::var("EXPLAIN_LAYOUT") {
         Ok(string) => {
@@ -111,7 +115,7 @@ fn debug<'a>(element: Element<'a, Msg>) -> Element<'a, Msg> {
     }
 }
 
-pub(crate) fn results_view<'a>(content: Elem<'a>) -> Elem<'a> {
+pub(crate) fn results_view(content: Elem<'_>) -> Elem<'_> {
     let question_with_controls = Column::new()
         .width(Length::Fill)
         .spacing(20)

@@ -35,7 +35,7 @@ impl Quizers {
 
     fn update_current_page(&mut self) {
         self.view.current_page = match self.view.page_idx {
-            x if x <= self.view.questions.count() - 1 => Question,
+            x if x < self.view.questions.count() => Question,
             x if x == self.view.questions.count() => Results,
             x if x == self.view.questions.count() + 1 => Settings,
             _ => panic!("no such page"),
@@ -62,8 +62,7 @@ impl Sandbox for Quizers {
             Msg::NextPressed | Msg::ShowResults => self.view.go_next_page(),
             Msg::Answer(idx) => self.view.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.go_page(idx),
-            Msg::SettingsPressed => self.view.go_settings_page(),
-            Msg::GoBackPressed => self.view.go_settings_page(),
+            Msg::SettingsPressed | Msg::GoBackPressed => self.view.go_settings_page(),
         }
         self.update_current_page();
     }

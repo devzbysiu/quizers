@@ -1,6 +1,6 @@
 use crate::helpers::{checkbox, radio};
 use crate::quizers::Elem;
-use iced::{Column, Container, Length, Text};
+use iced::{Column, Container, Text};
 use md_questions::{MdQuestion, MdQuestions};
 use std::mem;
 use std::ops::{Index, IndexMut};
@@ -122,11 +122,7 @@ impl Question {
     }
 
     pub(crate) fn view<'a>(&self) -> Elem<'a> {
-        Container::new(self.question_text())
-            .height(Length::Fill)
-            .width(Length::Fill)
-            .center_x()
-            .into()
+        Container::new(self.question_text()).center_x().into()
     }
 
     fn question_text<'a>(&self) -> Elem<'a> {

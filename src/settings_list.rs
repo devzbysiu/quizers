@@ -14,7 +14,7 @@ impl SettingsList {
         }
     }
 
-    pub(crate) fn view<'a>(&'a mut self, selected_setting: usize) -> Elem<'a> {
+    pub(crate) fn view(&mut self, selected_setting: usize) -> Elem<'_> {
         let mut column_content = Column::new();
         for (idx, setting) in self.setting_labels.iter_mut().enumerate() {
             let mut label =
