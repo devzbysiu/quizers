@@ -28,17 +28,12 @@ impl QuestionList {
             column_content = column_content.push(Space::with_height(Length::from(10)));
         }
 
-        let scrollable_column = Scrollable::new(&mut self.scroll).push(
-            Container::new(column_content)
-                .width(Length::Fill)
-                .center_x(),
-        );
-
-        Container::new(scrollable_column)
-            .height(Length::Fill)
-            .width(Length::from(150))
-            .style(style::QuestionsColumn)
-            .center_y()
+        Scrollable::new(&mut self.scroll)
+            .push(
+                Container::new(column_content)
+                    .width(Length::Fill)
+                    .center_x(),
+            )
             .into()
     }
 }

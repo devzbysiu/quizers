@@ -12,24 +12,34 @@ pub(crate) fn build_main_view<'a>(
     questions_view: Elem<'a>,
     controls: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
-    let question = Column::new()
+    let header_container = Container::new(header).style(style::Header);
+    let questions_list_container = Container::new(questions_list)
+        .height(Length::Fill)
+        .width(Length::from(150))
+        .style(style::QuestionsColumn)
+        .center_y();
+
+    let questions_column = Column::new()
         .height(Length::FillPortion(70))
         .push(questions_view);
 
-    let controls = Row::new()
+    let controls_row = Row::new()
         .height(Length::FillPortion(5))
         .push(controls.0)
         .push(Space::with_width(Length::Fill))
         .push(controls.1);
 
-    let main_view: Elem<'a> = Column::new()
+    let question_with_controls = Column::new()
         .padding(25)
-        .push(header)
-        .push(question)
-        .push(controls)
-        .into();
+        .push(questions_column)
+        .push(controls_row);
 
-    debug(Row::new().push(questions_list).push(main_view).into())
+    let main_view = Row::new()
+        .height(Length::FillPortion(22))
+        .push(questions_list_container)
+        .push(question_with_controls);
+
+    debug(Column::new().push(header_container).push(main_view).into())
 }
 
 pub(crate) fn build_settings_view<'a>(

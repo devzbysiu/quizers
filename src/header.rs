@@ -23,7 +23,8 @@ impl Header {
             settings_button(&mut self.settings_button, "S").on_press(Msg::SettingsPressed);
 
         Row::new()
-            .height(Length::FillPortion(4))
+            .height(Length::FillPortion(1))
+            .padding(10)
             .push(go_back_button)
             .push(Space::with_width(Length::Fill))
             .push(settings_button)

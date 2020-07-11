@@ -1,8 +1,12 @@
 use iced::{button, checkbox, container, radio, Background, Color, Vector};
 
-const ACTIVE: Color = Color::from_rgb(114_f32 / 255.0, 137_f32 / 255.0, 218_f32 / 255.0);
+const ACTIVE: Color = Color::from_rgb(32_f32 / 255.0, 90_f32 / 255.0, 151_f32 / 255.0);
 
-const SURFACE: Color = Color::from_rgb(64_f32 / 255.0, 68_f32 / 255.0, 75_f32 / 255.0);
+const SURFACE: Color = Color::from_rgb(48_f32 / 255.0, 55_f32 / 255.0, 57_f32 / 255.0);
+
+const HEADER_SURFACE: Color = Color::from_rgb(34_f32 / 255.0, 39_f32 / 255.0, 41_f32 / 255.0);
+
+const SIDEBAR_SURFACE: Color = Color::from_rgb(43_f32 / 255.0, 51_f32 / 255.0, 54_f32 / 255.0);
 
 pub struct Radio;
 
@@ -36,12 +40,24 @@ impl container::StyleSheet for Container {
     }
 }
 
+pub struct Header;
+
+impl container::StyleSheet for Header {
+    fn style(&self) -> container::Style {
+        container::Style {
+            background: Some(Background::Color(HEADER_SURFACE)),
+            text_color: Some(Color::WHITE),
+            ..container::Style::default()
+        }
+    }
+}
+
 pub struct QuestionsColumn;
 
 impl container::StyleSheet for QuestionsColumn {
     fn style(&self) -> container::Style {
         container::Style {
-            background: Some(Background::Color(Color::from_rgb8(82, 84, 87))),
+            background: Some(Background::Color(SIDEBAR_SURFACE)),
             text_color: Some(Color::WHITE),
             ..container::Style::default()
         }
@@ -74,7 +90,7 @@ pub struct QuestionLabel;
 impl button::StyleSheet for QuestionLabel {
     fn active(&self) -> button::Style {
         button::Style {
-            background: Some(Background::Color(Color::from_rgb8(82, 84, 87))),
+            background: Some(Background::Color(SIDEBAR_SURFACE)),
             border_radius: 0,
             text_color: Color::WHITE,
             ..button::Style::default()
@@ -91,7 +107,7 @@ pub struct SelectedLabel;
 impl button::StyleSheet for SelectedLabel {
     fn active(&self) -> button::Style {
         button::Style {
-            background: Some(Background::Color(Color::from_rgb8(128, 131, 135))),
+            background: Some(Background::Color(ACTIVE)),
             border_radius: 0,
             text_color: Color::WHITE,
             ..button::Style::default()
