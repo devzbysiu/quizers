@@ -25,7 +25,7 @@ pub(crate) fn build_view<'a>(
         .push(controls.1);
 
     let controls = Column::new()
-        .height(Length::FillPortion(10))
+        .height(Length::FillPortion(5))
         .push(controls_row);
 
     let main_view: Elem<'a> = Column::new()
