@@ -9,37 +9,72 @@ use std::env;
 pub(crate) fn build_main_view<'a>(
     questions_list: Elem<'a>,
     header: Elem<'a>,
-    questions_view: Elem<'a>,
+    question_view: Elem<'a>,
     controls: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
-    let header_container = Container::new(header).style(style::Header);
-    let questions_list_container = Container::new(questions_list)
+    debug(
+        Column::new()
+            .push(control_bar_container(header))
+            .push(quiz_view_row(
+                questions_list_container(questions_list),
+                question_with_controls_column(
+                    question_column(question_view),
+                    controls_row(controls),
+                ),
+            ))
+            .into(),
+    )
+}
+
+fn control_bar_container<'a>(control_bar: Elem<'a>) -> Elem<'a> {
+    Container::new(control_bar).style(style::Header).into()
+}
+
+fn question_with_controls_column<'a>(
+    question_column: Elem<'a>,
+    controls_row: Elem<'a>,
+) -> Elem<'a> {
+    Column::new()
+        .padding(25)
+        .push(question_column)
+        .push(controls_row)
+        .into()
+}
+
+fn quiz_view_row<'a>(
+    questions_list_container: Elem<'a>,
+    question_with_controls: Elem<'a>,
+) -> Elem<'a> {
+    Row::new()
+        .height(Length::FillPortion(22))
+        .push(questions_list_container)
+        .push(question_with_controls)
+        .into()
+}
+
+fn questions_list_container<'a>(questions_list: Elem<'a>) -> Elem<'a> {
+    Container::new(questions_list)
         .height(Length::Fill)
         .width(Length::from(150))
         .style(style::QuestionsColumn)
-        .center_y();
+        .center_y()
+        .into()
+}
 
-    let questions_column = Column::new()
-        .height(Length::FillPortion(70))
-        .push(questions_view);
+fn question_column<'a>(question_view: Elem<'a>) -> Elem<'a> {
+    Column::new()
+        .height(Length::FillPortion(18))
+        .push(question_view)
+        .into()
+}
 
-    let controls_row = Row::new()
-        .height(Length::FillPortion(5))
-        .push(controls.0)
+fn controls_row<'a>(ctrls: (Button<'a, Msg>, Button<'a, Msg>)) -> Elem<'a> {
+    Row::new()
+        .height(Length::FillPortion(1))
+        .push(ctrls.0)
         .push(Space::with_width(Length::Fill))
-        .push(controls.1);
-
-    let question_with_controls = Column::new()
-        .padding(25)
-        .push(questions_column)
-        .push(controls_row);
-
-    let main_view = Row::new()
-        .height(Length::FillPortion(22))
-        .push(questions_list_container)
-        .push(question_with_controls);
-
-    debug(Column::new().push(header_container).push(main_view).into())
+        .push(ctrls.1)
+        .into()
 }
 
 pub(crate) fn build_settings_view<'a>(
