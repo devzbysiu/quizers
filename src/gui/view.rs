@@ -15,8 +15,8 @@ pub(crate) enum PageModel {
 }
 
 pub(crate) struct View {
-    pub(crate) controls: Controls,
-    pub(crate) questions_list: QuestionList,
+    controls: Controls,
+    questions_list: QuestionList,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
     pub(crate) current_page: PageModel,
