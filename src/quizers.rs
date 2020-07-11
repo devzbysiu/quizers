@@ -1,6 +1,6 @@
 use crate::question::Questions;
 use crate::style;
-use crate::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results, Settings};
+use crate::view::PageModel::{Question, Results, Settings};
 use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
@@ -26,7 +26,7 @@ pub(crate) struct Quizers {
 impl Quizers {
     fn inner_view(&mut self) -> Elem<'_> {
         match &mut self.view.current_page {
-            FirstQuestion | MiddleQuestion | LastQuestion => self.view.question(),
+            Question => self.view.question(),
             Results => self.view.results(),
             Settings => self.view.settings(),
         }
@@ -34,10 +34,10 @@ impl Quizers {
 
     fn update_current_page(&mut self) {
         self.view.current_page = match self.view.page_idx {
-            0 => FirstQuestion,
-            x if x == self.view.questions.count() - 1 => LastQuestion,
+            x if x <= self.view.questions.count() - 1 => Question,
             x if x == self.view.questions.count() => Results,
-            _ => MiddleQuestion,
+            x if x == self.view.questions.count() + 1 => Settings,
+            _ => panic!("no such page"),
         }
     }
 
@@ -65,7 +65,7 @@ impl Sandbox for Quizers {
             Msg::NextPressed | Msg::ShowResults => self.view.page_idx += 1,
             Msg::Answer(idx) => self.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.page_idx = idx,
-            Msg::SettingsPressed => self.view.current_page = Settings,
+            Msg::SettingsPressed => self.view.page_idx = self.view.questions.count() + 1,
         }
         self.update_current_page();
     }

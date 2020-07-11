@@ -8,9 +8,7 @@ use conv::prelude::*;
 use iced::{Column, Text};
 
 pub(crate) enum PageModel {
-    FirstQuestion,
-    MiddleQuestion,
-    LastQuestion,
+    Question,
     Settings,
     Results,
 }
@@ -32,7 +30,7 @@ impl View {
             questions_list: QuestionList::new(questions.count()),
             questions,
             page_idx: 0,
-            current_page: PageModel::FirstQuestion,
+            current_page: PageModel::Question,
         }
     }
 
