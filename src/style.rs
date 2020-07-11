@@ -123,3 +123,24 @@ impl checkbox::StyleSheet for Checkbox {
         }
     }
 }
+
+pub struct SettingsButton;
+
+impl button::StyleSheet for SettingsButton {
+    fn active(&self) -> button::Style {
+        button::Style {
+            background: Some(Background::Color(SURFACE)),
+            border_radius: 10,
+            text_color: Color::WHITE,
+            ..button::Style::default()
+        }
+    }
+
+    fn hovered(&self) -> button::Style {
+        button::Style {
+            text_color: Color::WHITE,
+            shadow_offset: Vector::new(1.0, 2.0),
+            ..self.active()
+        }
+    }
+}

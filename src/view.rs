@@ -1,4 +1,5 @@
 use crate::controls::Controls;
+use crate::header::Header;
 use crate::helpers::{build_view, results_view};
 use crate::question::Questions;
 use crate::question_list::QuestionList;
@@ -15,6 +16,7 @@ pub(crate) enum PageModel {
 }
 
 pub(crate) struct View {
+    header: Header,
     controls: Controls,
     questions_list: QuestionList,
     pub(crate) questions: Questions,
@@ -25,6 +27,7 @@ pub(crate) struct View {
 impl View {
     pub(crate) fn new(questions: Questions) -> Self {
         Self {
+            header: Header::new(),
             controls: Controls::new(questions.count()),
             questions_list: QuestionList::new(questions.count()),
             questions,
@@ -36,6 +39,7 @@ impl View {
     pub(crate) fn question(&mut self) -> Elem<'_> {
         build_view(
             self.questions_list.view(self.page_idx),
+            self.header.view(),
             self.questions[self.page_idx].view(),
             self.controls.ctrls(self.page_idx),
         )
@@ -46,15 +50,17 @@ impl View {
         let results_section = Column::new().spacing(20).push(Text::new(result));
         build_view(
             self.questions_list.view(self.page_idx),
+            self.header.view(),
             results_view(results_section.into()),
             self.controls.ctrls(self.page_idx),
         )
     }
 
     pub(crate) fn settings<'a>(&mut self) -> Elem<'a> {
-        let result = format_result_msg(&self.questions);
-        let results_section = Column::new().spacing(20).push(Text::new(result));
-        results_section.into()
+        Column::new()
+            .spacing(20)
+            .push(Text::new("settings section"))
+            .into()
     }
 }
 

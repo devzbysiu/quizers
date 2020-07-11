@@ -8,25 +8,24 @@ use std::env;
 
 pub(crate) fn build_view<'a>(
     questions_list: Elem<'a>,
+    header: Elem<'a>,
     questions_view: Elem<'a>,
     controls: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
-    let header = Column::new()
-        .height(Length::FillPortion(7))
-        .push(Text::new("header"));
+    let header = Row::new()
+        .height(Length::FillPortion(4))
+        .push(Space::with_width(Length::Fill))
+        .push(header);
 
     let question = Column::new()
         .height(Length::FillPortion(70))
         .push(questions_view);
 
-    let controls_row = Row::new()
+    let controls = Row::new()
+        .height(Length::FillPortion(5))
         .push(controls.0)
         .push(Space::with_width(Length::Fill))
         .push(controls.1);
-
-    let controls = Column::new()
-        .height(Length::FillPortion(5))
-        .push(controls_row);
 
     let main_view: Elem<'a> = Column::new()
         .padding(25)

@@ -1,6 +1,6 @@
 use crate::question::Questions;
 use crate::style;
-use crate::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results};
+use crate::view::PageModel::{FirstQuestion, LastQuestion, MiddleQuestion, Results, Settings};
 use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
@@ -15,6 +15,7 @@ pub(crate) enum Msg {
     BackPressed,
     NextPressed,
     ShowResults,
+    SettingsPressed,
     GoToQuestion(usize),
 }
 
@@ -27,7 +28,7 @@ impl Quizers {
         match &mut self.view.current_page {
             FirstQuestion | MiddleQuestion | LastQuestion => self.view.question(),
             Results => self.view.results(),
-            Setting => self.view.settings(),
+            Settings => self.view.settings(),
         }
     }
 
@@ -64,6 +65,7 @@ impl Sandbox for Quizers {
             Msg::NextPressed | Msg::ShowResults => self.view.page_idx += 1,
             Msg::Answer(idx) => self.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.page_idx = idx,
+            Msg::SettingsPressed => self.view.current_page = Settings,
         }
         self.update_current_page();
     }
