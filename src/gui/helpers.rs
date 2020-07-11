@@ -1,9 +1,10 @@
 use crate::gui::quizers::{Elem, Msg};
 use crate::gui::style;
 use iced::{
-    button, Button, Checkbox, Column, Container, HorizontalAlignment, Length, Radio, Row, Space,
-    Text,
+    button, Button, Checkbox, Color, Column, Container, Element, HorizontalAlignment, Length,
+    Radio, Row, Space, Text,
 };
+use std::env;
 
 pub(crate) fn build_view<'a>(
     questions_list: Elem<'a>,
@@ -11,17 +12,11 @@ pub(crate) fn build_view<'a>(
     controls: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
     let header = Column::new()
-        .max_width(1366)
-        .height(Length::FillPortion(5))
-        .spacing(20)
-        .padding(20)
+        .height(Length::FillPortion(7))
         .push(Text::new("header"));
 
     let question = Column::new()
-        .max_width(1366)
         .height(Length::FillPortion(70))
-        .spacing(20)
-        .padding(20)
         .push(questions_view);
 
     let controls_row = Row::new()
@@ -30,28 +25,36 @@ pub(crate) fn build_view<'a>(
         .push(controls.1);
 
     let controls = Column::new()
-        .max_width(1366)
-        .height(Length::FillPortion(8))
-        .spacing(20)
-        .padding(20)
+        .height(Length::FillPortion(10))
         .push(controls_row);
 
     let main_view: Elem<'a> = Column::new()
+        .padding(25)
         .push(header)
         .push(question)
         .push(controls)
         .into();
 
-    Row::new()
-        .push(questions_list)
-        .push(main_view)
-        .spacing(50)
-        .into()
+    debug(Row::new().push(questions_list).push(main_view).into())
+}
+
+fn debug<'a>(element: Element<'a, Msg>) -> Element<'a, Msg> {
+    let mut element = element;
+    match env::var("EXPLAIN_LAYOUT") {
+        Ok(string) => {
+            if string == "true" {
+                element = element.explain(Color::BLACK);
+                element
+            } else {
+                element
+            }
+        }
+        _ => element,
+    }
 }
 
 pub(crate) fn results_view<'a>(content: Elem<'a>) -> Elem<'a> {
     let question_with_controls = Column::new()
-        .max_width(1366)
         .width(Length::Fill)
         .spacing(20)
         .padding(20)

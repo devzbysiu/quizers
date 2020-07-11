@@ -6,8 +6,8 @@ use iced::{
 };
 
 pub(crate) struct QuestionList {
-    pub(crate) questions_labels: Vec<button::State>,
-    pub(crate) scroll: scrollable::State,
+    questions_labels: Vec<button::State>,
+    scroll: scrollable::State,
 }
 
 impl QuestionList {

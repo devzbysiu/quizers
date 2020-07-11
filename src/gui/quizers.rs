@@ -7,6 +7,8 @@ use std::fs::read_to_string;
 
 pub(crate) type Elem<'a> = Element<'a, Msg>;
 
+const QUESTIONS: &str = "/home/zbychu/projects/md-questions/res/QUESTIONS.md";
+
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
     Answer(usize),
@@ -47,11 +49,9 @@ impl Sandbox for Quizers {
     type Message = Msg;
 
     fn new() -> Self {
-        let content = read_to_string("/home/zbychu/projects/md-questions/res/QUESTIONS.md")
-            .expect("failed to read questions markdown");
-        Self {
-            view: View::new(Questions::from(content.as_str())),
-        }
+        let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
+        let view = View::new(Questions::from(content.as_str()));
+        Self { view }
     }
 
     fn title(&self) -> String {

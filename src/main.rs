@@ -1,6 +1,7 @@
 use crate::gui::quizers::Quizers;
 use iced::{Sandbox, Settings};
 
+mod controls;
 mod gui;
 mod question;
 mod question_list;
