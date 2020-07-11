@@ -1,9 +1,11 @@
 use crate::controls::Controls;
 use crate::header::Header;
-use crate::helpers::{build_view, results_view};
+use crate::helpers::{build_main_view, build_settings_view, results_view};
 use crate::question::Questions;
 use crate::question_list::QuestionList;
 use crate::quizers::Elem;
+use crate::settings::Settings;
+use crate::settings_list::SettingsList;
 use conv::prelude::*;
 use iced::{Column, Text};
 
@@ -17,8 +19,11 @@ pub(crate) struct View {
     header: Header,
     controls: Controls,
     questions_list: QuestionList,
+    settings_list: SettingsList,
+    settings: Settings,
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
+    setting_idx: usize,
     pub(crate) current_page: PageModel,
 }
 
@@ -28,14 +33,17 @@ impl View {
             header: Header::new(),
             controls: Controls::new(questions.count()),
             questions_list: QuestionList::new(questions.count()),
+            settings_list: SettingsList::new(),
+            settings: Settings::new(),
             questions,
             page_idx: 0,
+            setting_idx: 0,
             current_page: PageModel::Question,
         }
     }
 
     pub(crate) fn question(&mut self) -> Elem<'_> {
-        build_view(
+        build_main_view(
             self.questions_list.view(self.page_idx),
             self.header.view(),
             self.questions[self.page_idx].view(),
@@ -46,7 +54,7 @@ impl View {
     pub(crate) fn results(&mut self) -> Elem<'_> {
         let result = format_result_msg(&self.questions);
         let results_section = Column::new().spacing(20).push(Text::new(result));
-        build_view(
+        build_main_view(
             self.questions_list.view(self.page_idx),
             self.header.view(),
             results_view(results_section.into()),
@@ -54,11 +62,12 @@ impl View {
         )
     }
 
-    pub(crate) fn settings<'a>(&mut self) -> Elem<'a> {
-        Column::new()
-            .spacing(20)
-            .push(Text::new("settings section"))
-            .into()
+    pub(crate) fn settings(&mut self) -> Elem<'_> {
+        build_settings_view(
+            self.settings_list.view(self.setting_idx),
+            self.header.view(),
+            self.settings.view(),
+        )
     }
 
     pub(crate) fn go_next_page(&mut self) {

@@ -16,6 +16,7 @@ pub(crate) enum Msg {
     NextPressed,
     ShowResults,
     SettingsPressed,
+    GoBackPressed,
     GoToQuestion(usize),
 }
 
@@ -62,6 +63,7 @@ impl Sandbox for Quizers {
             Msg::Answer(idx) => self.view.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.go_page(idx),
             Msg::SettingsPressed => self.view.go_settings_page(),
+            Msg::GoBackPressed => self.view.go_settings_page(),
         }
         self.update_current_page();
     }

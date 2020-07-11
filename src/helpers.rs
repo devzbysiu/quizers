@@ -6,17 +6,12 @@ use iced::{
 };
 use std::env;
 
-pub(crate) fn build_view<'a>(
+pub(crate) fn build_main_view<'a>(
     questions_list: Elem<'a>,
     header: Elem<'a>,
     questions_view: Elem<'a>,
     controls: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
-    let header = Row::new()
-        .height(Length::FillPortion(4))
-        .push(Space::with_width(Length::Fill))
-        .push(header);
-
     let question = Column::new()
         .height(Length::FillPortion(70))
         .push(questions_view);
@@ -35,6 +30,25 @@ pub(crate) fn build_view<'a>(
         .into();
 
     debug(Row::new().push(questions_list).push(main_view).into())
+}
+
+pub(crate) fn build_settings_view<'a>(
+    settings_list: Elem<'a>,
+    header: Elem<'a>,
+    questions_view: Elem<'a>,
+) -> Elem<'a> {
+    let header = Row::new()
+        .height(Length::FillPortion(4))
+        .push(Space::with_width(Length::Fill))
+        .push(header);
+
+    let question = Column::new()
+        .height(Length::FillPortion(70))
+        .push(questions_view);
+
+    let main_view: Elem<'a> = Column::new().padding(25).push(header).push(question).into();
+
+    debug(Row::new().push(settings_list).push(main_view).into())
 }
 
 fn debug<'a>(element: Element<'a, Msg>) -> Element<'a, Msg> {
@@ -81,6 +95,18 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
+pub(crate) fn settings_button<'a, Message>(
+    state: &'a mut button::State,
+    label: &str,
+) -> Button<'a, Message> {
+    Button::new(
+        state,
+        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+    )
+    .min_width(35)
+    .style(style::SettingsButton)
+}
+
 pub(crate) fn radio<'a>(
     answer_idx: usize,
     answer_text: &str,
@@ -96,4 +122,17 @@ pub(crate) fn checkbox<'a>(is_checked: bool, answer_text: &str, answer_idx: usiz
         .size(25)
         .style(style::Checkbox)
         .into()
+}
+
+pub(crate) fn listing_label<'a, Message>(
+    state: &'a mut button::State,
+    label: &str,
+) -> Button<'a, Message> {
+    Button::new(
+        state,
+        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+    )
+    .padding(12)
+    .min_width(150)
+    .style(style::QuestionLabel)
 }

@@ -1,26 +1,32 @@
+use crate::helpers::settings_button;
 use crate::quizers::{Elem, Msg};
-use crate::style;
-use iced::{button, Button, HorizontalAlignment, Text};
+use iced::{button, Length, Row, Space};
 
 pub(crate) struct Header {
-    setting_button: button::State,
+    settings_button: button::State,
+    go_back_button: button::State,
 }
 
 impl Header {
     pub(crate) fn new() -> Self {
         Self {
-            setting_button: button::State::new(),
+            settings_button: button::State::new(),
+            go_back_button: button::State::new(),
         }
     }
 
     pub(crate) fn view<'a>(&'a mut self) -> Elem<'a> {
-        Button::new(
-            &mut self.setting_button,
-            Text::new("S").horizontal_alignment(HorizontalAlignment::Center),
-        )
-        .min_width(35)
-        .on_press(Msg::SettingsPressed)
-        .style(style::SettingsButton)
-        .into()
+        let go_back_button =
+            settings_button(&mut self.go_back_button, "<").on_press(Msg::GoBackPressed);
+
+        let settings_button =
+            settings_button(&mut self.settings_button, "S").on_press(Msg::SettingsPressed);
+
+        Row::new()
+            .height(Length::FillPortion(4))
+            .push(go_back_button)
+            .push(Space::with_width(Length::Fill))
+            .push(settings_button)
+            .into()
     }
 }

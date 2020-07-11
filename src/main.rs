@@ -7,6 +7,8 @@ mod helpers;
 mod question;
 mod question_list;
 mod quizers;
+mod settings;
+mod settings_list;
 mod style;
 mod view;
 

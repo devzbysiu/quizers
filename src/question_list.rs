@@ -1,9 +1,7 @@
+use crate::helpers::listing_label;
 use crate::quizers::{Elem, Msg};
 use crate::style;
-use iced::{
-    button, scrollable, Button, Column, Container, HorizontalAlignment, Length, Scrollable, Space,
-    Text,
-};
+use iced::{button, scrollable, Column, Container, Length, Scrollable, Space};
 
 pub(crate) struct QuestionList {
     questions_labels: Vec<button::State>,
@@ -21,7 +19,7 @@ impl QuestionList {
     pub(crate) fn view(&mut self, selected_question: usize) -> Elem<'_> {
         let mut column_content = Column::new();
         for (idx, question) in self.questions_labels.iter_mut().enumerate() {
-            let mut label = question_label(question, &format!("Question {}", idx + 1))
+            let mut label = listing_label(question, &format!("Question {}", idx + 1))
                 .on_press(Msg::GoToQuestion(idx));
             if selected_question == idx {
                 label = label.style(style::SelectedLabel);
@@ -43,14 +41,4 @@ impl QuestionList {
             .center_y()
             .into()
     }
-}
-
-fn question_label<'a, Message>(state: &'a mut button::State, label: &str) -> Button<'a, Message> {
-    Button::new(
-        state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
-    )
-    .padding(12)
-    .min_width(150)
-    .style(style::QuestionLabel)
 }
