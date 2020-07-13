@@ -1,4 +1,4 @@
-use crate::quizers::{Elem, Msg};
+use crate::quizers::{Buttons, Elem, Msg};
 use crate::style;
 use iced::{
     button, Button, Checkbox, Color, Column, Container, Element, HorizontalAlignment, Length,
@@ -10,7 +10,7 @@ pub(crate) fn build_main_view<'a>(
     questions_list: Elem<'a>,
     header: Elem<'a>,
     question_view: Elem<'a>,
-    buttons: (Button<'a, Msg>, Button<'a, Msg>),
+    buttons: Buttons<'a>,
 ) -> Elem<'a> {
     debug(
         Column::new()
@@ -60,7 +60,7 @@ fn question_with_controls_column<'a>(question_view: Elem<'a>, controls_row: Elem
         .into()
 }
 
-fn controls_row<'a>(ctrls: (Button<'a, Msg>, Button<'a, Msg>)) -> Elem<'a> {
+fn controls_row<'a>(ctrls: Buttons<'a>) -> Elem<'a> {
     Row::new()
         .height(Length::Units(50))
         .push(ctrls.0)

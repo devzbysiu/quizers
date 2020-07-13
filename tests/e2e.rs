@@ -2,7 +2,7 @@ use assert_gui::GuiError;
 use assert_gui::{Gui, OpenedGui};
 use std::time::Duration;
 
-const NEXT_BUTTON: (f64, f64) = (1833.0, 1004.0);
+const NEXT_BUTTON: (f64, f64) = (1833.0, 1035.0);
 const START_POINT: (f64, f64) = (154.0, 2.0);
 const END_POINT: (f64, f64) = (1919.0, 1079.0);
 

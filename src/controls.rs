@@ -1,6 +1,6 @@
 use crate::helpers::button;
-use crate::quizers::Msg;
-use iced::{button, Button};
+use crate::quizers::{Buttons, Msg};
+use iced::button;
 
 pub(crate) struct Controls {
     questions_count: usize,
@@ -21,7 +21,7 @@ impl Controls {
         }
     }
 
-    pub(crate) fn ctrls(&mut self, page_idx: usize) -> (Button<'_, Msg>, Button<'_, Msg>) {
+    pub(crate) fn ctrls(&mut self, page_idx: usize) -> Buttons<'_> {
         match page_idx {
             0 => {
                 let back = button(&mut self.back_button, "Back");

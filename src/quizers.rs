@@ -2,10 +2,11 @@ use crate::question::Questions;
 use crate::style;
 use crate::view::PageModel::{Question, Results, Settings};
 use crate::view::View;
-use iced::{Container, Element, Length, Sandbox};
+use iced::{Button, Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
 
 pub(crate) type Elem<'a> = Element<'a, Msg>;
+pub(crate) type Buttons<'a> = (Button<'a, Msg>, Button<'a, Msg>);
 
 const QUESTIONS: &str = "/home/zbychu/projects/md-questions/res/QUESTIONS.md";
 
