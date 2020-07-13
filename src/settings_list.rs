@@ -1,6 +1,7 @@
-use crate::helpers::listing_label;
-use crate::quizers::{Elem, Msg};
+use crate::quizers::Msg;
 use crate::style;
+use crate::view::listing_label;
+use crate::view::Elem;
 use iced::{button, Column, Container, Length, Space};
 
 pub(crate) struct SettingsList {

@@ -1,4 +1,4 @@
-use crate::quizers::Elem;
+use crate::view::Elem;
 use iced::Text;
 
 pub(crate) struct Settings {}

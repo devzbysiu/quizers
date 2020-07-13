@@ -1,5 +1,6 @@
-use crate::helpers::button;
-use crate::quizers::{Buttons, Msg};
+use crate::quizers::Msg;
+use crate::view::button;
+use crate::view::Buttons;
 use iced::button;
 
 pub(crate) struct Controls {

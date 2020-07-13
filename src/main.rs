@@ -3,7 +3,6 @@ use iced::{Sandbox, Settings};
 
 mod controls;
 mod header;
-mod helpers;
 mod question;
 mod question_list;
 mod quizers;

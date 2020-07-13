@@ -1,5 +1,6 @@
-use crate::helpers::settings_button;
-use crate::quizers::{Elem, Msg};
+use crate::quizers::Msg;
+use crate::view::settings_button;
+use crate::view::Elem;
 use iced::{button, Length, Row, Space};
 
 pub(crate) struct Header {
