@@ -28,7 +28,7 @@ pub(crate) fn build_main_view<'a>(
 
 fn control_bar_container(header: Elem<'_>) -> Elem<'_> {
     Container::new(header)
-        .height(Length::FillPortion(1))
+        .height(Length::Units(50))
         .style(style::Header)
         .into()
 }
@@ -47,7 +47,7 @@ fn quiz_view_row<'a>(
 fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
     Container::new(questions_list)
         .height(Length::Fill)
-        .width(Length::FillPortion(1))
+        .width(Length::Units(150))
         .style(style::QuestionsColumn)
         .center_y()
         .center_x()
