@@ -10,17 +10,14 @@ pub(crate) fn build_main_view<'a>(
     questions_list: Elem<'a>,
     header: Elem<'a>,
     question_view: Elem<'a>,
-    controls: (Button<'a, Msg>, Button<'a, Msg>),
+    buttons: (Button<'a, Msg>, Button<'a, Msg>),
 ) -> Elem<'a> {
     debug(
         Column::new()
             .push(control_bar_container(header))
             .push(quiz_view_row(
                 questions_list_container(questions_list),
-                question_with_controls_column(
-                    question_column(question_view),
-                    controls_row(controls),
-                ),
+                question_with_controls_column(question_view, controls_row(buttons)),
             ))
             .into(),
     )
@@ -38,7 +35,6 @@ fn quiz_view_row<'a>(
     question_with_controls: Elem<'a>,
 ) -> Elem<'a> {
     Row::new()
-        .height(Length::FillPortion(22))
         .push(questions_list_container)
         .push(question_with_controls)
         .into()
@@ -54,28 +50,19 @@ fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
         .into()
 }
 
-fn question_with_controls_column<'a>(
-    question_column: Elem<'a>,
-    controls_row: Elem<'a>,
-) -> Elem<'a> {
+fn question_with_controls_column<'a>(question_view: Elem<'a>, controls_row: Elem<'a>) -> Elem<'a> {
     Column::new()
         .padding(25)
         .width(Length::FillPortion(9))
-        .push(question_column)
-        .push(controls_row)
-        .into()
-}
-
-fn question_column(question_view: Elem<'_>) -> Elem<'_> {
-    Column::new()
-        .height(Length::FillPortion(18))
         .push(question_view)
+        .push(Space::with_height(Length::Fill))
+        .push(controls_row)
         .into()
 }
 
 fn controls_row<'a>(ctrls: (Button<'a, Msg>, Button<'a, Msg>)) -> Elem<'a> {
     Row::new()
-        .height(Length::FillPortion(1))
+        .height(Length::Units(50))
         .push(ctrls.0)
         .push(Space::with_width(Length::Fill))
         .push(ctrls.1)
