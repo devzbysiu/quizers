@@ -24,8 +24,9 @@ impl QuestionList {
             if selected_question == idx {
                 label = label.style(style::SelectedLabel);
             }
-            column_content = column_content.push(label);
-            column_content = column_content.push(Space::with_height(Length::from(10)));
+            column_content = column_content
+                .push(label)
+                .push(Space::with_height(Length::from(10)));
         }
 
         Scrollable::new(&mut self.scroll)

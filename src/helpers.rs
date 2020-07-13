@@ -50,6 +50,7 @@ fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
         .width(Length::FillPortion(1))
         .style(style::QuestionsColumn)
         .center_y()
+        .center_x()
         .into()
 }
 
@@ -182,6 +183,6 @@ pub(crate) fn listing_label<'a, Message>(
         Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
     )
     .padding(12)
-    .min_width(150)
+    .width(Length::Fill)
     .style(style::QuestionLabel)
 }
