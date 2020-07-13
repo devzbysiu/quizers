@@ -164,7 +164,7 @@ fn question_with_controls_column<'a>(question_view: Elem<'a>, controls_row: Elem
         .into()
 }
 
-fn controls_row<'a>(ctrls: Buttons<'a>) -> Elem<'a> {
+fn controls_row(ctrls: Buttons<'_>) -> Elem<'_> {
     Row::new()
         .height(Length::Units(50))
         .push(ctrls.0)
