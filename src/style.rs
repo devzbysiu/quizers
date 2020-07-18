@@ -2,6 +2,10 @@ use iced::{button, checkbox, container, radio, Background, Color, Vector};
 
 const ACTIVE: Color = Color::from_rgb(32_f32 / 255.0, 90_f32 / 255.0, 151_f32 / 255.0);
 
+const CORRECT_ANSWER: Color = Color::from_rgb(116_f32 / 255.0, 179_f32 / 255.0, 128_f32 / 255.0);
+
+const WRONG_ANSWER: Color = Color::from_rgb(205_f32 / 255.0, 64_f32 / 255.0, 62_f32 / 255.0);
+
 const SURFACE: Color = Color::from_rgb(48_f32 / 255.0, 55_f32 / 255.0, 57_f32 / 255.0);
 
 const HEADER_SURFACE: Color = Color::from_rgb(34_f32 / 255.0, 39_f32 / 255.0, 41_f32 / 255.0);
@@ -108,6 +112,40 @@ impl button::StyleSheet for SelectedLabel {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(ACTIVE)),
+            border_radius: 0,
+            text_color: Color::WHITE,
+            ..button::Style::default()
+        }
+    }
+
+    fn hovered(&self) -> button::Style {
+        self.active()
+    }
+}
+
+pub struct CorrectAnswer;
+
+impl button::StyleSheet for CorrectAnswer {
+    fn active(&self) -> button::Style {
+        button::Style {
+            background: Some(Background::Color(CORRECT_ANSWER)),
+            border_radius: 0,
+            text_color: Color::WHITE,
+            ..button::Style::default()
+        }
+    }
+
+    fn hovered(&self) -> button::Style {
+        self.active()
+    }
+}
+
+pub struct WrongAnswer;
+
+impl button::StyleSheet for WrongAnswer {
+    fn active(&self) -> button::Style {
+        button::Style {
+            background: Some(Background::Color(WRONG_ANSWER)),
             border_radius: 0,
             text_color: Color::WHITE,
             ..button::Style::default()

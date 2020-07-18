@@ -9,7 +9,7 @@ use crate::style;
 use conv::prelude::*;
 use iced::{
     button, Button, Checkbox, Color, Column, Container, Element, HorizontalAlignment, Length,
-    Radio, Row, Space, Text,
+    Radio, Row, Space, Text, VerticalAlignment,
 };
 use std::env;
 
@@ -32,6 +32,7 @@ pub(crate) struct View {
     pub(crate) page_idx: usize,
     setting_idx: usize,
     pub(crate) current_page: PageModel,
+    show_results: bool,
 }
 
 impl View {
@@ -46,12 +47,19 @@ impl View {
             page_idx: 0,
             setting_idx: 0,
             current_page: PageModel::Question,
+            show_results: false,
         }
     }
 
     pub(crate) fn question(&mut self) -> Elem<'_> {
+        let questions_list = if self.show_results {
+            self.questions_list
+                .mark_questions(&self.questions.answers_state())
+        } else {
+            self.questions_list.view(self.page_idx)
+        };
         build_main_view(
-            self.questions_list.view(self.page_idx),
+            questions_list,
             self.header.view(),
             self.questions[self.page_idx].view(),
             self.controls.ctrls(self.page_idx),
@@ -59,10 +67,17 @@ impl View {
     }
 
     pub(crate) fn results(&mut self) -> Elem<'_> {
+        self.show_results = true;
         let result = format_result_msg(&self.questions);
         let results_section = Column::new().spacing(20).push(Text::new(result));
+        let questions_list = if self.show_results {
+            self.questions_list
+                .mark_questions(&self.questions.answers_state())
+        } else {
+            self.questions_list.view(self.page_idx)
+        };
         build_main_view(
-            self.questions_list.view(self.page_idx),
+            questions_list,
             self.header.view(),
             results_view(results_section.into()),
             self.controls.ctrls(self.page_idx),
@@ -271,9 +286,12 @@ pub(crate) fn listing_label<'a, Message>(
 ) -> Button<'a, Message> {
     Button::new(
         state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+        Text::new(label)
+            .horizontal_alignment(HorizontalAlignment::Center)
+            .vertical_alignment(VerticalAlignment::Center),
     )
     .padding(12)
     .width(Length::Fill)
+    .height(Length::Units(50))
     .style(style::QuestionLabel)
 }

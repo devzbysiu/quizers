@@ -30,6 +30,10 @@ impl Questions {
         }
         points
     }
+
+    pub(crate) fn answers_state(&self) -> Vec<bool> {
+        self.questions.iter().map(Question::is_correct).collect()
+    }
 }
 
 impl IndexMut<usize> for Questions {
@@ -73,6 +77,10 @@ impl Question {
             self.selected_answers = vec![false; self.md_question.answers_count()];
             self.selected_answers[idx] = true;
         }
+    }
+
+    pub(crate) fn is_correct(&self) -> bool {
+        self.points_gained() == 1
     }
 
     pub(crate) fn points_gained(&self) -> u32 {
