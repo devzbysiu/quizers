@@ -15,6 +15,7 @@ pub(crate) enum Msg {
     NextPressed,
     ShowResults,
     SettingsPressed,
+    RestartPressed,
     GoBackPressed,
     GoToQuestion(usize),
 }
@@ -62,6 +63,11 @@ impl Sandbox for Quizers {
             Msg::Answer(idx) => self.view.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.go_page(idx),
             Msg::SettingsPressed | Msg::GoBackPressed => self.view.go_settings_page(),
+            Msg::RestartPressed => {
+                // TODO: don't read questions again? - or maybe it's a feature?
+                let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
+                self.view = View::new(Questions::from(content.as_str()));
+            }
         }
         self.update_current_page();
     }
