@@ -135,8 +135,8 @@ pub(crate) fn build_main_view<'a>(
         Column::new()
             .push(control_bar_container(header))
             .push(quiz_view_row(
-                questions_list_container(questions_list),
-                question_with_controls_column(question_view, controls_row(buttons)),
+                list_container(questions_list),
+                main_view_column(question_view, Some(controls_row(buttons))),
             ))
             .into(),
     )
@@ -159,7 +159,7 @@ fn quiz_view_row<'a>(
         .into()
 }
 
-fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
+fn list_container(questions_list: Elem<'_>) -> Elem<'_> {
     Container::new(questions_list)
         .height(Length::Fill)
         .width(Length::Units(150))
@@ -169,14 +169,18 @@ fn questions_list_container(questions_list: Elem<'_>) -> Elem<'_> {
         .into()
 }
 
-fn question_with_controls_column<'a>(question_view: Elem<'a>, controls_row: Elem<'a>) -> Elem<'a> {
-    Column::new()
+fn main_view_column<'a>(question_view: Elem<'a>, controls_row: Option<Elem<'a>>) -> Elem<'a> {
+    let mut column = Column::new()
         .padding(25)
         .width(Length::FillPortion(9))
         .push(question_view)
-        .push(Space::with_height(Length::Fill))
-        .push(controls_row)
-        .into()
+        .push(Space::with_height(Length::Fill));
+
+    if let Some(controls_row) = controls_row {
+        column = column.push(controls_row);
+    }
+
+    column.into()
 }
 
 fn controls_row(ctrls: Buttons<'_>) -> Elem<'_> {
@@ -191,20 +195,17 @@ fn controls_row(ctrls: Buttons<'_>) -> Elem<'_> {
 pub(crate) fn build_settings_view<'a>(
     settings_list: Elem<'a>,
     header: Elem<'a>,
-    questions_view: Elem<'a>,
+    setting_view: Elem<'a>,
 ) -> Elem<'a> {
-    let header = Row::new()
-        .height(Length::FillPortion(4))
-        .push(Space::with_width(Length::Fill))
-        .push(header);
-
-    let question = Column::new()
-        .height(Length::FillPortion(70))
-        .push(questions_view);
-
-    let main_view: Elem<'a> = Column::new().padding(25).push(header).push(question).into();
-
-    debug(Row::new().push(settings_list).push(main_view).into())
+    debug(
+        Column::new()
+            .push(control_bar_container(header))
+            .push(quiz_view_row(
+                list_container(settings_list),
+                main_view_column(setting_view, None),
+            ))
+            .into(),
+    )
 }
 
 fn debug(element: Element<'_, Msg>) -> Element<'_, Msg> {
