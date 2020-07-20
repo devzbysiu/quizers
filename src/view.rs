@@ -111,6 +111,24 @@ impl View {
     pub(crate) fn go_settings_page(&mut self) {
         self.page_idx = self.questions.count() + 1;
     }
+
+    fn update_current_page(&mut self) {
+        self.current_page = match self.page_idx {
+            x if x < self.questions.count() => PageModel::Question,
+            x if x == self.questions.count() => PageModel::Results,
+            x if x == self.questions.count() + 1 => PageModel::Settings,
+            _ => panic!("no such page"),
+        }
+    }
+
+    pub(crate) fn current(&mut self) -> Elem<'_> {
+        self.update_current_page();
+        match &mut self.current_page {
+            PageModel::Question => self.question(),
+            PageModel::Results => self.results(),
+            PageModel::Settings => self.settings(),
+        }
+    }
 }
 
 fn format_result_msg(questions: &Questions) -> String {
