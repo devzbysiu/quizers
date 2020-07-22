@@ -4,7 +4,7 @@ use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
 use std::fs::read_to_string;
 
-const QUESTIONS: &str = "/home/zbychu/projects/md-questions/res/QUESTIONS.md";
+const QUESTIONS: &str = "res/QUESTIONS.md";
 
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
