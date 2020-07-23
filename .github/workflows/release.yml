@@ -18,19 +18,38 @@ jobs:
       RUSTFLAGS: '-C target-feature=+crt-static'
     name: Windows
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout quizers
+      uses: actions/checkout@v2
       with:
         ref: windows-installer
+        path: ./quizers
+
+    - name: Checkout md-questions
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/md-questions
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./md-questions
+
+    - name: Checkout assert-gui
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/assert-gui
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./assert-gui
+
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
+
     - uses: actions-rs/install@v0.1
       with:
         crate: cargo-wix
         version: latest
-    - run: cargo wix -v --nocapture -o .
+
+    - run: cd ./quizers && cargo wix -v --nocapture -o .
     - name: Upload MSI Artifact
       uses: actions/upload-artifact@v2
       with:
         name: windows
-        path: ./*.msi
+        path: ./quizers/*.msi
