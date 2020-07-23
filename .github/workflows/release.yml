@@ -9,7 +9,7 @@ on:
     tags:
       - "v*"
   pull_request:
-    branches: [ master ]
+    branches: [ windows-installer ]
 
 jobs:
   windowsbuild:
@@ -19,6 +19,8 @@ jobs:
     name: Windows
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: windows-installer
     - uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
