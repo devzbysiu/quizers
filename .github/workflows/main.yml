@@ -30,6 +30,13 @@ jobs:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./md-questions
 
+    - name: Checkout assert-gui
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/assert-gui
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./assert-gui
+
     - name: Run cargo-make
       uses: actions-rs/toolchain@v1
       with:
