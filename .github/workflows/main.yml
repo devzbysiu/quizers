@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install dependencies
-      run: apt install libleptonica-dev libtesseract-dev clang
+      run: sudo apt install libleptonica-dev libtesseract-dev clang
 
     - name: Checkout quizers
       uses: actions/checkout@v2
