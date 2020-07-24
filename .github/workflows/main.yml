@@ -12,12 +12,15 @@ jobs:
     steps:
     - name: Install dependencies
       run: sudo apt install libleptonica-dev libtesseract-dev clang libxtst-dev
+
     - uses: actions/cache@v2
       with:
         path: |
           ~/.cargo/registry
           ~/.cargo/git
-          target
+          ./quizers/target
+          ./md-questions/target
+          ./assert-gui/target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Checkout quizers
