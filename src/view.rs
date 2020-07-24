@@ -237,7 +237,7 @@ fn debug(element: Element<'_, Msg>) -> Element<'_, Msg> {
                 element
             }
         }
-        _ => element,
+        Err(_) => element,
     }
 }
 
