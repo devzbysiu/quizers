@@ -20,7 +20,7 @@ impl Header {
 
     pub(crate) fn view(&mut self) -> Elem<'_> {
         let go_back_btn =
-            settings_button(&mut self.go_back_button, "<").on_press(Msg::GoBackPressed);
+            settings_button(&mut self.go_back_button, " < ").on_press(Msg::GoBackPressed);
 
         let settings_btn =
             settings_button(&mut self.settings_button, "S").on_press(Msg::SettingsPressed);
