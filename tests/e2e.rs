@@ -23,6 +23,7 @@ Proxy Components will be automatically upgraded to the V2 Core Component on AEM 
 "#;
 
 #[test]
+#[cfg_attr(not(feature = "gui_tests"), ignore)]
 fn test() -> Result<(), GuiError> {
     QuizersGui::open()?
         .go_to_question(3)?

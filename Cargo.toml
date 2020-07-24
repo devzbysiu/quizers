@@ -25,6 +25,7 @@ pretty_env_logger = "0.4.0"
 iced = { version = "0.1.1" }
 md_questions = { path = "../md-questions" }
 conv = "0.3.3"
+assert_gui = { path = "../assert-gui", optional = true }
 
-[dev-dependencies]
-assert_gui = { path = "../assert-gui" }
+[features]
+gui_tests = [ "assert_gui" ]
