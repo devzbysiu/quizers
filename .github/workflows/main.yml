@@ -13,16 +13,6 @@ jobs:
     - name: Install dependencies
       run: sudo apt install libleptonica-dev libtesseract-dev clang libxtst-dev
 
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          ./quizers/target
-          ./md-questions/target
-          ./assert-gui/target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
     - name: Checkout quizers
       uses: actions/checkout@v2
       with:
@@ -41,6 +31,16 @@ jobs:
         repository: devzbysiu/assert-gui
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./assert-gui
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ./quizers/target
+          ./md-questions/target
+          ./assert-gui/target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Run cargo-make
       uses: actions-rs/toolchain@v1
