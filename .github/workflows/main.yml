@@ -20,10 +20,25 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout Repo
+    - name: Checkout quizers
       uses: actions/checkout@v2
+      with:
+        path: ./quizers
 
-    # Use cargo make https://github.com/davidB/rust-cargo-make
+    - name: Checkout md-questions
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/md-questions
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./md-questions
+
+    - name: Checkout assert-gui
+      uses: actions/checkout@v2
+      with:
+        repository: devzbysiu/assert-gui
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        path: ./assert-gui
+
     - name: Run cargo-make
       uses: actions-rs/toolchain@v1
       with:
@@ -31,6 +46,6 @@ jobs:
         override: true
     - uses: davidB/rust-cargo-make@v1
     - name: Run tests
-      run: cargo make --profile ci all
+      run: cd ./quizers && cargo make --profile ci all
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
