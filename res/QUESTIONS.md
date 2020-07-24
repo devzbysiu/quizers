@@ -787,3 +787,145 @@ In which maven build phase is the content package assembled?
 - [x] install
 
 ---
+
+## Question 59 `Templates and Components` `Ignore`
+A developer is creating a custom component that shows a list of pages. For each page, the following items must be shown: 
+- title of the page
+- description of the page, 
+- a button with fixed text “Read more” that must be translatable
+All of the above fields must be wrapped in a <div> tag. The logic for obtaining the list of pages must be reusable for future components. Which snippet should the developer use to meet these requirements?:
+
+## Answers
+- [ ] :
+  ```html
+  <sly data-sly-use.model="com.example.Component"/>
+  <div data-sly-list="${model.pages}">
+    <p>${item.title}</p>
+    <p>${item.description}</p>
+    <a href="${item.link}">${"Read more" @ .translate}</a>
+  </div>
+  ```
+- [ ] :
+  ```html
+  <sly data-sly-use.model="com.example.Component"/>
+  <div data-sly-list.page="${model.pages}">
+    <p>${page.title}</p>
+    <p>${page.description}</p>
+    <a href="${page.link}">${"Read more" @ .i18n}</a>
+  </div>
+  ```
+- [x] :
+  ```html
+  <sly data-sly-use.model="com.example.Component"/>
+  <div data-sly-list="${model.pages}">
+    <p>${item.title}</p>
+    <p>${item.description}</p>
+    <a href="${item.link}">${"Read more" @ i18n}</a>
+  </div>
+  ```
+- [ ] :
+  ```html
+  <sly data-sly-use.model="com.example.Component"/>
+  <div data-sly-list="${model.pages}">
+    <p>${model.title}</p>
+    <p>${model.description}</p>
+    <a href="${model.link}">${"Read more" @ translate}</a>
+  </div>
+  ```
+
+## [Reading](reading/question-59.md)
+
+---
+
+## Question 60 `Troubleshooting AEM projects` `Ignore`
+A developer identifies that some requests for the page `/content/sampleproject/page.html` take longer that other requests for the same page. Refer to the `$DOCROOT/content/sampleproject` directory below:
+```
+[user@group /opt/dispatcher/cache/content/sampleproject ]$ ls -la
+total 2
+drwxr-xr-x. 5 apache apache 4096 Feb 11 11:41 .
+drwxr-xr-x. 3 apache apache 4096 Nov 29 16:07 ..
+drwxr-xr-x. 4 apache apache 4096 Feb 7 03:21 page.html
+-rw-r--r--. 1 apache apache 0 Feb 7 03:19 .stat
+```
+The dispatcher.log file contains the following lines:
+```
+[Wed Feb 13 13:14:04 2012] [D] [1376(1532)] checking [/libs/cs/security/userinfo/json]
+[Wed Feb 13 13:14:04 2012] [D] [1376(1532)] Cache disabled due to query string:
+tracking_id=1350373444666
+[Wed Feb 13 13:14:04 2012] [D] [1376(1532)] cache-action for [/libs/cs/security/userinfo/json]: NONE
+```
+How should the developer make sure that the page is always cached? ([[]]):
+
+## Answers
+- [ ] Modify the `dispatcher.any` file to contain the following lines:
+  ```
+  /filter
+    {
+    ...
+    /0023 { /type "allow" /url "/content/*/*/html" /params "tracking_id" }
+    ...
+    }
+  ```
+- [ ] Modify the `dispatcher.any` file to contain the following lines:
+  ```
+  /rules
+    {
+    ...
+    /0000 { /glob "*" /type "allow" /params "tracking_id" }
+    ...
+    }
+  ```
+- [ ] Modify the `dispatcher.any` file to contain the following lines:
+  ```
+  /filter
+    {
+    ...
+    /0023 { /type "allow" /url "/content/*/*.html?tracking_id=*" }
+    ...
+    }
+  ```
+- [ ] Modify the `dispatcher.any` file to contain the following lines:
+  ```
+  /ignoreUrlParams
+    {
+    ...
+    /0023 { /glob "tracking_id" /type "allow" }
+    ...
+    }
+  ```
+
+## [Reading](https://docs.adobe.com/content/help/en/experience-manager-dispatcher/using/configuring/dispatcher-configuration.html#ignoring-url-parameters)
+
+---
+
+## Question 61 `OSGi Services` `Ignore`
+A developer needs to implement a service component that should be manually configured by operations to react on operational circumstances. The service component should NOT be active by default. The service has the properties myservice.name (one string value) and myservice.stringValues (a list of the string values) to be configured. The developer needs to use OSGi Metatype annotations to make those properties configurable in the Apache Felix Web Console. Which set of steps should the developer take to meet these requirements?
+
+## Answers
+- [ ] steps:
+  1. For the class fields `myserviceName` and `myserviceStringValues`, add a `@AttributeDefinition` annotation each with names set to `myservice.name` and `myservice.stringValues` respectively.
+  2. Use the `@Component` annotation with `configurationFactory = true` on the service component class.
+  3. Use the `@Service` service component class.
+  4. Use the `activate` method of the service component class to get the configuration annotation interface class injected.
+- [ ] steps:
+  1. Create an annotation interface as inner class of the service component and annotate it with `@ObjectClassDefinition`.
+  2. Apply `@AttributeDefinition` for the methods `myservice.name` and `myservice.stringValues`.
+  3. Use the `@Component` annotation with `configurationPolicy = ConfigurationPolicy.REQUIRE` on the service component.
+  4. Use the `@Designate` annotation to link the service component to the created configuration annotation interface.
+  5. Use the `activate` method of the service component class to get the configuration annotation interface class injected.
+- [x] steps:
+  1. Create an annotation interface as inner class of the service component and annotate it with `@ObjectClassDefinition`.
+  2. Apply `@AttributeDefinition` for the methods `myservice_name` and `myservice_stringValues`.
+  3. Use the `@Component` annotation with `configurationPolicy = ConfigurationPolicy.REQUIRE` on the service component.
+  4. Use the `@Designate` annotation to link the service component to the created configuration annotation interface.
+  5. Use the `activate` method of the service component class to get the configuration annotation interface class injected.
+- [ ] steps:
+  1. For the class fields `myserviceName` and `myserviceStringValues`, add a `@Property` annotation each with names set to `myservice.name` and `myservice.stringValues` respectively.
+  2. Use the `@Component` annotation with `configurationFactory = true` on the service component class.
+  3. Use the `@Service` service component class.
+  4. The configuration is automatically injected into the field by the service component runtime.
+
+## [Reading](reading/question-61.md)
+
+---
+
