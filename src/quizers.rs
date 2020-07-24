@@ -2,6 +2,8 @@ use crate::question::Questions;
 use crate::style;
 use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
+use reqwest;
+use reqwest::header;
 use std::fs::read_to_string;
 
 const QUESTIONS: &str = "res/QUESTIONS.md";
@@ -26,8 +28,20 @@ impl Sandbox for Quizers {
     type Message = Msg;
 
     fn new() -> Self {
-        let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
-        let view = View::new(Questions::from(content.as_str()));
+        let token = env!("GH_TOKEN");
+        let mut headers = header::HeaderMap::new();
+        headers.insert("Authorization", format!("token {}", token).parse().unwrap());
+        headers.insert("Accept", "application/vnd.github.v3.raw".parse().unwrap());
+
+        let res = reqwest::blocking::Client::new()
+                .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
+                .headers(headers)
+                .send().unwrap()
+                .text().unwrap();
+        println!("{}", res);
+
+        // let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
+        let view = View::new(Questions::from(res.as_str()));
         Self { view }
     }
 
