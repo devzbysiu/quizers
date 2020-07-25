@@ -36,6 +36,7 @@ impl Sandbox for Quizers {
         let res = reqwest::blocking::Client::new()
                 .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
                 .headers(headers)
+                // TODO: get rid of unwraps
                 .send().unwrap()
                 .text().unwrap();
         println!("{}", res);
