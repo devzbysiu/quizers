@@ -2,7 +2,6 @@ use crate::question::Questions;
 use crate::style;
 use crate::view::View;
 use iced::{Container, Element, Length, Sandbox};
-use reqwest;
 use reqwest::header;
 use std::fs::read_to_string;
 
