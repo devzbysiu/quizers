@@ -1,8 +1,9 @@
 use crate::question::Questions;
 use crate::style;
 use crate::view::View;
+use anyhow::Result;
 use iced::{Container, Element, Length, Sandbox};
-use reqwest::header;
+use reqwest::blocking::Client;
 use std::fs::read_to_string;
 
 const QUESTIONS: &str = "res/QUESTIONS.md";
@@ -27,21 +28,9 @@ impl Sandbox for Quizers {
     type Message = Msg;
 
     fn new() -> Self {
-        let token = env!("GH_TOKEN");
-        let mut headers = header::HeaderMap::new();
-        headers.insert("Authorization", format!("token {}", token).parse().unwrap());
-        headers.insert("Accept", "application/vnd.github.v3.raw".parse().unwrap());
-
-        let res = reqwest::blocking::Client::new()
-                .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
-                .headers(headers)
-                // TODO: get rid of unwraps
-                .send().unwrap()
-                .text().unwrap();
-        println!("{}", res);
-
-        // let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
-        let view = View::new(Questions::from(res.as_str()));
+        let view = View::new(Questions::from(
+            get_questions().expect("failed to fetch questions").as_str(),
+        ));
         Self { view }
     }
 
@@ -71,4 +60,11 @@ impl Sandbox for Quizers {
             .style(style::Container)
             .into()
     }
+}
+
+fn get_questions() -> Result<String> {
+    Ok(Client::new()
+        .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
+        .send()?
+        .text()?)
 }

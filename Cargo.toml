@@ -27,6 +27,7 @@ md_questions = { path = "../md-questions" }
 conv = "0.3.3"
 assert_gui = { path = "../assert-gui", optional = true }
 reqwest = { version = "0.10.7", features = ["blocking"] }
+anyhow = "1.0.31"
 
 [features]
 gui_tests = [ "assert_gui" ]
