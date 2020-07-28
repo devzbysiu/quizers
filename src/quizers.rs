@@ -4,9 +4,6 @@ use crate::view::View;
 use anyhow::Result;
 use iced::{Container, Element, Length, Sandbox};
 use reqwest::blocking::Client;
-use std::fs::read_to_string;
-
-const QUESTIONS: &str = "res/QUESTIONS.md";
 
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
@@ -28,10 +25,9 @@ impl Sandbox for Quizers {
     type Message = Msg;
 
     fn new() -> Self {
-        let view = View::new(Questions::from(
-            get_questions().expect("failed to fetch questions").as_str(),
-        ));
-        Self { view }
+        Self {
+            view: view().expect("failed to create view"),
+        }
     }
 
     fn title(&self) -> String {
@@ -46,9 +42,8 @@ impl Sandbox for Quizers {
             Msg::GoToQuestion(idx) => self.view.go_page(idx),
             Msg::SettingsPressed | Msg::GoBackPressed => self.view.go_settings_page(),
             Msg::RestartPressed => {
-                // TODO: don't read questions again? - or maybe it's a feature?
-                let content = read_to_string(QUESTIONS).expect("failed to read questions markdown");
-                self.view = View::new(Questions::from(content.as_str()));
+                // TODO: don't request questions again? - or maybe it's a feature?
+                self.view = view().expect("failed to create view");
             }
         }
     }
@@ -67,4 +62,8 @@ fn get_questions() -> Result<String> {
         .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
         .send()?
         .text()?)
+}
+
+fn view() -> Result<View> {
+    Ok(View::new(Questions::from(get_questions()?.as_str())))
 }
