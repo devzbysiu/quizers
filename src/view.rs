@@ -257,7 +257,7 @@ pub(crate) fn results_view(content: Elem<'_>) -> Elem<'_> {
         .into()
 }
 
-pub(crate) fn button<'a, Message>(
+pub(crate) fn button<'a, Message: Clone>(
     state: &'a mut button::State,
     label: &str,
 ) -> Button<'a, Message> {
@@ -270,7 +270,7 @@ pub(crate) fn button<'a, Message>(
     .style(style::Button)
 }
 
-pub(crate) fn settings_button<'a, Message>(
+pub(crate) fn settings_button<'a, Message: Clone>(
     state: &'a mut button::State,
     label: &str,
 ) -> Button<'a, Message> {
@@ -299,7 +299,7 @@ pub(crate) fn checkbox<'a>(is_checked: bool, answer_text: &str, answer_idx: usiz
         .into()
 }
 
-pub(crate) fn listing_label<'a, Message>(
+pub(crate) fn listing_label<'a, Message: Clone>(
     state: &'a mut button::State,
     label: &str,
 ) -> Button<'a, Message> {

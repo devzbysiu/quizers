@@ -13,5 +13,5 @@ mod view;
 
 fn main() {
     pretty_env_logger::init();
-    Quizers::run(Settings::default())
+    Quizers::run(Settings::default()).expect("failed to run he app");
 }

@@ -19,7 +19,7 @@ impl radio::StyleSheet for Radio {
         radio::Style {
             background: Background::Color(SURFACE),
             dot_color: ACTIVE,
-            border_width: 1,
+            border_width: 1.0,
             border_color: ACTIVE,
         }
     }
@@ -74,7 +74,7 @@ impl button::StyleSheet for Button {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(ACTIVE)),
-            border_radius: 3,
+            border_radius: 3.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
@@ -95,7 +95,7 @@ impl button::StyleSheet for QuestionLabel {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(SIDEBAR_SURFACE)),
-            border_radius: 0,
+            border_radius: 0.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
@@ -112,7 +112,7 @@ impl button::StyleSheet for SelectedLabel {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(ACTIVE)),
-            border_radius: 0,
+            border_radius: 0.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
@@ -129,7 +129,7 @@ impl button::StyleSheet for CorrectAnswer {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(CORRECT_ANSWER)),
-            border_radius: 0,
+            border_radius: 0.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
@@ -146,7 +146,7 @@ impl button::StyleSheet for WrongAnswer {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(WRONG_ANSWER)),
-            border_radius: 0,
+            border_radius: 0.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
@@ -164,9 +164,9 @@ impl checkbox::StyleSheet for Checkbox {
         checkbox::Style {
             background: Background::Color(SURFACE),
             checkmark_color: ACTIVE,
-            border_width: 1,
+            border_width: 1.0,
             border_color: ACTIVE,
-            border_radius: 3,
+            border_radius: 3.0,
         }
     }
 
@@ -184,7 +184,7 @@ impl button::StyleSheet for SettingsButton {
     fn active(&self) -> button::Style {
         button::Style {
             background: Some(Background::Color(SURFACE)),
-            border_radius: 10,
+            border_radius: 10.0,
             text_color: Color::WHITE,
             ..button::Style::default()
         }
