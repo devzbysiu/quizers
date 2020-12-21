@@ -14,22 +14,28 @@ args = ["check"]
 [tasks.clippy]
 install_create = "clippy"
 command = "cargo"
-args = ["clippy", "--all-targets", "--", "-W", "clippy::pedantic", "-D", "warnings"]
+args = ["clippy", "--all-targets", "--all-features", "--", "-W", "clippy::pedantic", "-D", "warnings"]
 
 [tasks.build]
 command = "cargo"
 args = ["build", "--release"]
 
-[tasks.test]
+[tasks.coverage]
+clear = true
 command = "cargo"
-args = ["test"]
+args = ["tarpaulin", "--ignore-tests", "-v", "--out", "Xml"]
+
+[tasks.coverage-report]
+clear = true
+command = "cargo"
+args = ["tarpaulin", "--ignore-tests", "-v", "--out", "Html"]
 
 [tasks.all]
 dependencies = [
     "format",
     "clippy",
-    "build",
-    "test",
-    "coverage-flow",
     "codecov-flow"
 ]
+
+[env]
+CARGO_MAKE_COVERAGE_PROVIDER = "tarpaulin"
