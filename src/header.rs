@@ -3,6 +3,7 @@ use crate::view::settings_button;
 use crate::view::Elem;
 use iced::{button, Length, Row, Space};
 
+#[derive(Default)]
 pub(crate) struct Header {
     settings_button: button::State,
     go_back_button: button::State,
@@ -11,11 +12,7 @@ pub(crate) struct Header {
 
 impl Header {
     pub(crate) fn new() -> Self {
-        Self {
-            settings_button: button::State::new(),
-            go_back_button: button::State::new(),
-            restart_button: button::State::new(),
-        }
+        Self::default()
     }
 
     pub(crate) fn view(&mut self) -> Elem<'_> {

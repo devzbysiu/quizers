@@ -35,6 +35,7 @@ impl SettingsList {
     }
 }
 
+#[derive(Default)]
 struct SettingLabel {
     state: button::State,
     label: String,
@@ -43,8 +44,8 @@ struct SettingLabel {
 impl SettingLabel {
     fn new<S: Into<String>>(label: S) -> Self {
         Self {
-            state: button::State::new(),
             label: label.into(),
+            ..Self::default()
         }
     }
 }

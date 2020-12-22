@@ -3,6 +3,7 @@ use crate::view::button;
 use crate::view::Buttons;
 use iced::button;
 
+#[derive(Default)]
 pub(crate) struct Controls {
     questions_count: usize,
     back_button: button::State,
@@ -15,10 +16,7 @@ impl Controls {
     pub(crate) fn new(questions_count: usize) -> Self {
         Self {
             questions_count,
-            back_button: button::State::new(),
-            next_button: button::State::new(),
-            finish_button: button::State::new(),
-            restart_button: button::State::new(),
+            ..Self::default()
         }
     }
 

@@ -8,7 +8,7 @@ impl Settings {
         Self {}
     }
 
-    #[allow(clippy::unused_self)]
+    #[allow(clippy::unused_self)] // TODO: remove this
     pub(crate) fn view<'a>(&mut self) -> Elem<'a> {
         Text::new("settings").into()
     }

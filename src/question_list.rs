@@ -4,6 +4,7 @@ use crate::view::listing_label;
 use crate::view::Elem;
 use iced::{button, scrollable, Column, Container, Length, Scrollable};
 
+#[derive(Default)]
 pub(crate) struct QuestionList {
     questions_labels: Vec<button::State>,
     scroll: scrollable::State,
@@ -13,7 +14,7 @@ impl QuestionList {
     pub(crate) fn new(question_count: usize) -> Self {
         Self {
             questions_labels: vec![button::State::new(); question_count],
-            scroll: scrollable::State::new(),
+            ..Self::default()
         }
     }
 
