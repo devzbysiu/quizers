@@ -16,7 +16,7 @@ use std::env;
 pub(crate) type Elem<'a> = Element<'a, Msg>;
 pub(crate) type Buttons<'a> = (Button<'a, Msg>, Button<'a, Msg>);
 
-pub(crate) enum PageModel {
+pub(crate) enum Page {
     Question,
     Settings,
     Results,
@@ -31,7 +31,7 @@ pub(crate) struct View {
     pub(crate) questions: Questions,
     pub(crate) page_idx: usize,
     setting_idx: usize,
-    pub(crate) current_page: PageModel,
+    pub(crate) current_page: Page,
     show_results: bool,
 }
 
@@ -46,7 +46,7 @@ impl View {
             questions,
             page_idx: 0,
             setting_idx: 0,
-            current_page: PageModel::Question,
+            current_page: Page::Question,
             show_results: false,
         }
     }
@@ -114,9 +114,9 @@ impl View {
 
     fn update_current_page(&mut self) {
         self.current_page = match self.page_idx {
-            x if x < self.questions.count() => PageModel::Question,
-            x if x == self.questions.count() => PageModel::Results,
-            x if x == self.questions.count() + 1 => PageModel::Settings,
+            x if x < self.questions.count() => Page::Question,
+            x if x == self.questions.count() => Page::Results,
+            x if x == self.questions.count() + 1 => Page::Settings,
             _ => panic!("no such page"),
         }
     }
@@ -124,9 +124,9 @@ impl View {
     pub(crate) fn current(&mut self) -> Elem<'_> {
         self.update_current_page();
         match &mut self.current_page {
-            PageModel::Question => self.question(),
-            PageModel::Results => self.results(),
-            PageModel::Settings => self.settings(),
+            Page::Question => self.question(),
+            Page::Results => self.results(),
+            Page::Settings => self.settings(),
         }
     }
 }

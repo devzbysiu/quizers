@@ -1,4 +1,3 @@
-use crate::quizers::Msg;
 use crate::style;
 use crate::view::listing_label;
 use crate::view::Elem;
@@ -18,8 +17,7 @@ impl SettingsList {
     pub(crate) fn view(&mut self, selected_setting: usize) -> Elem<'_> {
         let mut column_content = Column::new();
         for (idx, setting) in self.setting_labels.iter_mut().enumerate() {
-            let mut label =
-                listing_label(&mut setting.state, &setting.label).on_press(Msg::GoToQuestion(idx));
+            let mut label = listing_label(&mut setting.state, &setting.label);
             if selected_setting == idx {
                 label = label.style(style::SelectedLabel);
             }
