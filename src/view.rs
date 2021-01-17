@@ -138,7 +138,7 @@ fn format_result_msg(questions: &Questions) -> String {
         "You've got {}/{} ({:.2}%) points",
         points,
         questions.count(),
-        f64::value_from(points).expect("failed to convert from usize to f64")
+        f64::value_from(points).expect("failed to convert from usize to f64") * 100.0
             / f64::value_from(questions_count).expect("failed to convert from usize to f64")
     )
 }
