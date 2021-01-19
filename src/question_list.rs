@@ -29,16 +29,10 @@ impl QuestionList {
             column_content = column_content.push(label);
         }
 
-        Scrollable::new(&mut self.scroll)
-            .push(
-                Container::new(column_content)
-                    .width(Length::Fill)
-                    .center_x(),
-            )
-            .into()
+        scrollable(&mut self.scroll, column_content)
     }
 
-    pub(crate) fn mark_questions(&mut self, questions_state: &[bool]) -> Elem<'_> {
+    pub(crate) fn revealed(&mut self, questions_state: &[bool]) -> Elem<'_> {
         let mut column_content = Column::new();
         for (idx, question) in self.questions_labels.iter_mut().enumerate() {
             let mut label = listing_label(question, &format!("Question {}", idx + 1))
@@ -50,13 +44,16 @@ impl QuestionList {
             }
             column_content = column_content.push(label);
         }
-
-        Scrollable::new(&mut self.scroll)
-            .push(
-                Container::new(column_content)
-                    .width(Length::Fill)
-                    .center_x(),
-            )
-            .into()
+        scrollable(&mut self.scroll, column_content)
     }
+}
+
+fn scrollable<'a>(scroll: &'a mut scrollable::State, column_content: Column<'a, Msg>) -> Elem<'a> {
+    Scrollable::new(scroll)
+        .push(
+            Container::new(column_content)
+                .width(Length::Fill)
+                .center_x(),
+        )
+        .into()
 }

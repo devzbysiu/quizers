@@ -37,7 +37,8 @@ impl Sandbox for Quizers {
     fn update(&mut self, event: Msg) {
         match event {
             Msg::BackPressed => self.view.go_prev_page(),
-            Msg::NextPressed | Msg::ShowResults => self.view.go_next_page(),
+            Msg::NextPressed => self.view.go_next_page(),
+            Msg::ShowResults => self.view.go_results_page(),
             Msg::Answer(idx) => self.view.toggle_answer(idx),
             Msg::GoToQuestion(idx) => self.view.go_page(idx),
             Msg::SettingsPressed | Msg::GoBackPressed => self.view.go_settings_page(),

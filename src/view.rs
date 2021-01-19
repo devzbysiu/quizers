@@ -54,7 +54,7 @@ impl View {
     pub(crate) fn question(&mut self) -> Elem<'_> {
         let questions_list = if self.show_results {
             self.questions_list
-                .mark_questions(&self.questions.answers_state())
+                .revealed(&self.questions.answers_state())
         } else {
             self.questions_list.view(self.page_idx)
         };
@@ -72,7 +72,7 @@ impl View {
         let results_section = Column::new().spacing(20).push(Text::new(result));
         let questions_list = if self.show_results {
             self.questions_list
-                .mark_questions(&self.questions.answers_state())
+                .revealed(&self.questions.answers_state())
         } else {
             self.questions_list.view(self.page_idx)
         };
@@ -110,6 +110,10 @@ impl View {
 
     pub(crate) fn go_settings_page(&mut self) {
         self.page_idx = self.questions.count() + 1;
+    }
+
+    pub(crate) fn go_results_page(&mut self) {
+        self.page_idx = self.questions.count();
     }
 
     fn update_current_page(&mut self) {
@@ -270,7 +274,7 @@ pub(crate) fn button<'a, Message: Clone>(
     .style(style::Button)
 }
 
-pub(crate) fn settings_button<'a, Message: Clone>(
+pub(crate) fn header_button<'a, Message: Clone>(
     state: &'a mut button::State,
     label: &str,
 ) -> Button<'a, Message> {

@@ -34,7 +34,8 @@ impl Controls {
             }
             x if x == self.questions_count => {
                 let back = button(&mut self.back_button, "Back");
-                let restart = button(&mut self.restart_button, "Restart");
+                let restart =
+                    button(&mut self.restart_button, "Restart").on_press(Msg::RestartPressed);
                 (back, restart)
             }
             _ => {
