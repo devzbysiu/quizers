@@ -59,6 +59,10 @@ impl Sandbox for Quizers {
 }
 
 fn get_questions() -> Result<String> {
+    // use std::fs::read_to_string;
+    // Ok(read_to_string(
+    //     "/home/zbychu/learning/aem-exams/forms/aem-forms-developer/QUESTIONS.md",
+    // )?)
     Ok(Client::new()
         .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
         .send()?
