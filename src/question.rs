@@ -1,7 +1,7 @@
 use crate::view::Elem;
 use crate::view::{checkbox, radio};
 use iced::{Column, Container, Text};
-use md_questions::{questions::closed, MdQuestions};
+use md_questions::{Answer, MdQuestions, Question as MdQuestion};
 use std::mem;
 use std::ops::{Index, IndexMut};
 
@@ -57,12 +57,12 @@ impl From<&str> for Questions {
 
 pub(crate) struct Question {
     idx: usize,
-    md_question: closed::Question,
+    md_question: MdQuestion,
     selected_answers: Vec<bool>,
 }
 
 impl Question {
-    fn new(md_question: closed::Question, idx: usize) -> Self {
+    fn new(md_question: MdQuestion, idx: usize) -> Self {
         Self {
             idx,
             selected_answers: vec![false; md_question.answers_count()],
@@ -108,7 +108,7 @@ impl Question {
     fn is_answer_correct(&self, idx: usize) -> bool {
         self.md_question
             .answer(idx)
-            .unwrap_or(&closed::Answer::default())
+            .unwrap_or(&Answer::default())
             .is_correct()
     }
 
@@ -123,7 +123,7 @@ impl Question {
     pub(crate) fn answer_text(&self, idx: usize) -> String {
         self.md_question
             .answer(idx)
-            .unwrap_or(&closed::Answer::default())
+            .unwrap_or(&Answer::default())
             .text()
     }
 
