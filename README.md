@@ -7,21 +7,14 @@
   </h3>
 
   <p>
-    <img src="https://github.com/devzbysiu/quizers/workflows/Main/badge.svg" alt="CI status
-    badge" />
-    <a href="https://codecov.io/gh/devzbysiu/quizers">
-      <img src="https://img.shields.io/codecov/c/github/devzbysiu/quizers?style=for-the-badge&token=f2339b3de9e44be0a902458a669c1160" alt="Code coverage"/>
-    </a>
-    <a href="https://crates.io/crates/quizers">
-      <img src="https://img.shields.io/crates/l/quizers?style=for-the-badge" alt="License"/>
-    </a>
-    <a href="https://docs.rs/quizers">
-      <img src="https://img.shields.io/badge/docs-latest-blue.svg?style=for-the-badge" alt="docs.rs docs" />
-    </a>
+    <img src="https://img.shields.io/github/workflow/status/devzbysiu/quizers/ci?style=for-the-badge" alt="CI status badge" />
+    <img src="https://img.shields.io/badge/license-MIT%2FAPACHE--2.0-blue?style=for-the-badge" alt="License"/>
   </p>
 
   <h3>
     <a href="#about">About</a>
+    <span> | </span>
+    <a href="#demo">Demo</a>
     <span> | </span>
     <a href="#installation">Installation</a>
     <span> | </span>
@@ -39,9 +32,15 @@
 
 This app helps you to test your knowledge on specific topic with quiz-like experience.
 
-1. First, add your knowledge source:
-    - it's a markdown file with specific convention, which you can find [here](https://github.com/devzbysiu/md-questions)
-2. Then start the quiz
+> :warning: This is very much work in progress and it's not usable at this point without manual
+  code changes.
+
+It uses questions stored in a markdown file with specific convention, which you can find
+[here](https://github.com/devzbysiu/md-questions).
+
+# <p id="demo">Demo</p>
+
+![demo](./res/demo.png)
 
 # <p id="installation">Installation</p>
 

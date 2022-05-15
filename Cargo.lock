@@ -1847,6 +1847,7 @@ checksum = "60302e4db3a61da70c0cb7991976248362f30319e88850c487b9b95bbf059e00"
 [[package]]
 name = "md_questions"
 version = "0.1.0"
+source = "git+https://github.com/devzbysiu/md-questions?rev=5fb14b63b30324e026148592354713620aef7983#5fb14b63b30324e026148592354713620aef7983"
 dependencies = [
  "log",
  "nom 7.1.1",
