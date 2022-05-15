@@ -53,7 +53,7 @@ Proxy Components will be automatically upgraded to the V2 Core Component on AEM 
             let idx = idx - 1 - self.current_question;
             let mut gui = self.gui.clone();
             for _ in 0..idx {
-                gui = gui.click(NEXT_BUTTON).unwrap();
+                gui = gui.click(NEXT_BUTTON)?;
             }
             self.current_question = idx;
             Ok(self)
