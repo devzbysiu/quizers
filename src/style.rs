@@ -17,6 +17,7 @@ pub struct Radio;
 impl radio::StyleSheet for Radio {
     fn active(&self) -> radio::Style {
         radio::Style {
+            text_color: None,
             background: Background::Color(SURFACE),
             dot_color: ACTIVE,
             border_width: 1.0,
@@ -162,6 +163,7 @@ pub struct Checkbox;
 impl checkbox::StyleSheet for Checkbox {
     fn active(&self, _: bool) -> checkbox::Style {
         checkbox::Style {
+            text_color: None,
             background: Background::Color(SURFACE),
             checkmark_color: ACTIVE,
             border_width: 1.0,
