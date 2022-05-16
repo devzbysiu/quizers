@@ -22,7 +22,7 @@ edition = "2018"
 [dependencies]
 log = "0.4"
 pretty_env_logger = "0.4.0"
-iced = { version = "0.2.0" }
+iced = { version = "0.4.2" }
 md_questions = { git = "https://github.com/devzbysiu/md-questions", rev = "5fb14b63b30324e026148592354713620aef7983" }
 conv = "0.3.3"
 assert_gui = { path = "../assert-gui", optional = true }
