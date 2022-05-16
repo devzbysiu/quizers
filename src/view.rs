@@ -7,9 +7,9 @@ use crate::settings::Settings;
 use crate::settings_list::SettingsList;
 use crate::style;
 use conv::prelude::*;
+use iced::alignment::{Horizontal, Vertical};
 use iced::{
-    button, Button, Checkbox, Color, Column, Container, Element, HorizontalAlignment, Length,
-    Radio, Row, Space, Text, VerticalAlignment,
+    button, Button, Checkbox, Color, Column, Container, Element, Length, Radio, Row, Space, Text,
 };
 use std::env;
 
@@ -267,10 +267,10 @@ pub(crate) fn button<'a, Message: Clone>(
 ) -> Button<'a, Message> {
     Button::new(
         state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+        Text::new(label).horizontal_alignment(Horizontal::Center),
     )
     .padding(12)
-    .min_width(150)
+    .width(Length::Units(150))
     .style(style::Button)
 }
 
@@ -280,9 +280,9 @@ pub(crate) fn header_button<'a, Message: Clone>(
 ) -> Button<'a, Message> {
     Button::new(
         state,
-        Text::new(label).horizontal_alignment(HorizontalAlignment::Center),
+        Text::new(label).horizontal_alignment(Horizontal::Center),
     )
-    .min_width(35)
+    .width(Length::Units(35))
     .style(style::SettingsButton)
 }
 
@@ -310,8 +310,8 @@ pub(crate) fn listing_label<'a, Message: Clone>(
     Button::new(
         state,
         Text::new(label)
-            .horizontal_alignment(HorizontalAlignment::Center)
-            .vertical_alignment(VerticalAlignment::Center),
+            .horizontal_alignment(Horizontal::Center)
+            .vertical_alignment(Vertical::Center),
     )
     .padding(12)
     .width(Length::Fill)
