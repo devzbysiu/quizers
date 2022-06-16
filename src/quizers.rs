@@ -3,7 +3,6 @@ use crate::style;
 use crate::view::View;
 use anyhow::Result;
 use iced::{Container, Element, Length, Sandbox};
-use reqwest::blocking::Client;
 
 #[derive(Debug, Clone)]
 pub(crate) enum Msg {
@@ -59,14 +58,15 @@ impl Sandbox for Quizers {
 }
 
 fn get_questions() -> Result<String> {
-    // use std::fs::read_to_string;
-    // Ok(read_to_string(
-    //     "/home/zbychu/learning/aem-exams/forms/aem-forms-developer/QUESTIONS.md",
-    // )?)
-    Ok(Client::new()
-        .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
-        .send()?
-        .text()?)
+    use std::fs::read_to_string;
+    Ok(read_to_string(
+        "/home/zbyniu/Projects/ace-aem-sites-developer/QUESTIONS.md",
+    )?)
+    // use reqwest::blocking::Client;
+    // Ok(Client::new()
+    //     .get("https://raw.githubusercontent.com/devzbysiu/ace-aem-sites-developer/master/QUESTIONS.md")
+    //     .send()?
+    //     .text()?)
 }
 
 fn view() -> Result<View> {
