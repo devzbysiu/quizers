@@ -7,7 +7,7 @@
   </h3>
 
   <p>
-    <img src="https://img.shields.io/github/workflow/status/devzbysiu/quizers/ci?style=for-the-badge" alt="CI status badge" />
+    <img src="https://img.shields.io/github/actions/workflow/status/devzbysiu/quizers/ci.yml?style=for-the-badge" alt="CI status badge" />
     <img src="https://img.shields.io/badge/license-MIT%2FAPACHE--2.0-blue?style=for-the-badge" alt="License"/>
   </p>
 
