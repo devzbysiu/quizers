@@ -22,14 +22,12 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: devzbysiu/md-questions
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./md-questions
 
     - name: Checkout assert-gui
       uses: actions/checkout@v2
       with:
         repository: devzbysiu/assert-gui
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./assert-gui
 
     - uses: Swatinem/rust-cache@v1
