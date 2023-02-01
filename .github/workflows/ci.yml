@@ -28,6 +28,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: devzbysiu/assert-gui
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: ./assert-gui
 
     - uses: Swatinem/rust-cache@v1
