@@ -94,11 +94,7 @@ impl Question {
                 }
             }
         }
-        if correct_answers == self.correct_answers_count() {
-            1
-        } else {
-            0
-        }
+        u32::from(correct_answers == self.correct_answers_count())
     }
 
     pub(crate) fn answers_count(&self) -> usize {
